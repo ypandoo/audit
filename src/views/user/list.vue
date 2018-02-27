@@ -7,15 +7,15 @@
         <el-option v-for="item in importanceOptions" :key="item" :label="item" :value="item">
         </el-option>
       </el-select> -->
-      <el-select clearable class="filter-item" style="width: 130px" v-model="listQuery.type" :placeholder="$t('table.type')">
+      <!-- <el-select clearable class="filter-item" style="width: 130px" v-model="listQuery.type" :placeholder="$t('table.type')">
         <el-option v-for="item in  typeOptions" :key="item._id" :label="item.title" :value="item._id">
         </el-option>
-      </el-select>
+      </el-select> -->
       <!-- <el-select @change='handleFilter' style="width: 140px" class="filter-item" v-model="listQuery.sort">
         <el-option v-for="item in sortOptions" :key="item.key" :label="item.label" :value="item.key">
         </el-option>
       </el-select> -->
-      <el-button class="filter-item" type="primary" v-waves icon="el-icon-search" @click="handleFilter">{{$t('table.search')}}</el-button>
+      <!-- <el-button class="filter-item" type="primary" v-waves icon="el-icon-search" @click="handleFilter">{{$t('table.search')}}</el-button> -->
       <!-- <el-button class="filter-item" style="margin-left: 10px;" @click="handleCreate" type="primary" icon="el-icon-edit">{{$t('table.add')}}</el-button>
       <el-button class="filter-item" type="primary" :loading="downloadLoading" v-waves icon="el-icon-download" @click="handleDownload">{{$t('table.export')}}</el-button>
       <el-checkbox class="filter-item" style='margin-left:15px;' @change='tableKey=tableKey+1' v-model="showReviewer">{{$t('table.reviewer')}}</el-checkbox> -->
@@ -23,37 +23,47 @@
 
     <el-table :key='tableKey' :data="list" v-loading="listLoading" element-loading-text="给我一点时间" border fit highlight-current-row
       style="width: 100%">
-      <el-table-column align="center" :label="$t('table.id')" width="240">
+      <el-table-column align="center" :label="$t('table.account')" width="160">
         <template slot-scope="scope">
-          <span>{{scope.row._id}}</span>
+          <span>{{scope.row.account}}</span>
         </template>
       </el-table-column>
-      <!-- <el-table-column align="center" :label="$t('table.image')" width="160">
+
+      <el-table-column align="center" :label="$t('table.userName')" width="160">
         <template slot-scope="scope">
-          <img :src="scope.row.url" style="width:80px; height:60px"/>
-        </template>
-      </el-table-column> -->
-      <el-table-column width="200" align="center" :label="$t('table.date')">
-        <template slot-scope="scope">
-          <span>{{scope.row.updatedAt }}</span>
+          <span>{{scope.row.userName}}</span>
         </template>
       </el-table-column>
-      <el-table-column min-width="150px" :label="$t('table.title')">
+
+      <el-table-column width="160" align="center" :label="$t('table.mobile')">
         <template slot-scope="scope">
-          <span @click="handleUpdate(scope.row)">{{scope.row.title}}</span>
-          <!-- <el-tag>{{scope.row.type | typeFilter}}</el-tag> -->
+          <span>{{scope.row.mobile}}</span>
         </template>
       </el-table-column>
-      <el-table-column width="110px" align="center" :label="$t('table.author')">
+
+      <el-table-column width="160" align="center" :label="$t('table.role')">
         <template slot-scope="scope">
-          <span>{{scope.row.author}}</span>
-        </template>
-      </el-table-column>
-      <el-table-column width="110px" align="center" :label="$t('table.type')">
-        <template slot-scope="scope">
-          <span >{{scope.row.type.title}}</span>
+          <span >{{scope.row.displayName}}</span>
         </template>
       </el-table-column> 
+
+      <el-table-column width="200" align="center" :label="$t('table.email')">
+        <template slot-scope="scope">
+          <span>{{scope.row.email }}</span>
+        </template>
+      </el-table-column>
+
+      <el-table-column width="200" align="center" :label="$t('table.createDate')">
+        <template slot-scope="scope">
+          <span>{{scope.row.createDate }}</span>
+        </template>
+      </el-table-column>
+
+      <el-table-column width="200" align="center" :label="$t('table.updateDate')">
+        <template slot-scope="scope">
+          <span>{{scope.row.updateDate }}</span>
+        </template>
+      </el-table-column>
       <!-- <el-table-column width="80px" :label="$t('table.importance')">
         <template slot-scope="scope">
           <svg-icon v-for="n in +scope.row.importance" icon-class="star" class="meta-item__icon" :key="n"></svg-icon>
@@ -70,25 +80,27 @@
           <el-tag :type="scope.row.status | statusFilter">{{scope.row.status}}</el-tag>
         </template>
       </el-table-column> -->
-      <el-table-column align="center" :label="$t('table.actions')" width="230" class-name="small-padding fixed-width">
+      <el-table-column align="center" :label="$t('table.actions')"  class-name="small-padding fixed-width">
         <template slot-scope="scope">
-          <router-link :to="'edit-article/'+scope.row._id" class="link-type" style="margin-right:20px" >编辑</router-link>
-          <el-button type="danger" size="mini" @click="handleConfirmDelete(scope.row)">{{$t('table.delete')}}</el-button>
+          <!-- <router-link :to="'edit-article/'+scope.row._id" class="link-type" style="margin-right:20px" >编辑</router-link> -->
+          <!-- <el-button type="danger" size="mini" @click="handleConfirmDelete(scope.row)">{{$t('table.delete')}}</el-button> -->
           <!-- <el-button v-if="scope.row.status!='published'" size="mini" type="success" @click="handleModifyStatus(scope.row,'published')">{{$t('table.publish')}}
           </el-button> -->
-          <!-- <el-button v-if="scope.row.show" size="mini" @click="handleModifyStatus(scope.row, true)">显示
+          <el-button size="mini" type="primary" @click="handleModifyPassword(scope.row)" style="width:80px">修改密码
           </el-button>
-          <el-button v-if="!scope.row.show" size="mini" type="danger" @click="handleModifyStatus(scope.row, false)">不显示
-          </el-button> -->
+          <el-button size="mini" type="primary" :disabled="scope.row.state == 'active'" @click="handleModifyStatus(scope.row, 'active')">启用 
+          </el-button>
+          <el-button size="mini" type="danger"  :disabled="scope.row.state == 'inactive'" @click="handleModifyStatus(scope.row, 'inactive')">停用
+          </el-button>
         </template>
       </el-table-column>
     </el-table>
 
-    <div class="pagination-container">
+    <!-- <div class="pagination-container">
       <el-pagination background @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page.sync="listQuery.page"
         :page-sizes="[10,20,30, 50]" :page-size="listQuery.limit" layout="total, sizes, prev, pager, next, jumper" :total="total">
       </el-pagination>
-    </div>
+    </div> -->
 
     <!-- <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible">
       <el-form :rules="rules" ref="dataForm" :model="temp" label-position="left" label-width="70px" style='width: 400px; margin-left:50px;'>
@@ -126,13 +138,26 @@
       </div>
     </el-dialog> -->
 
-    <el-dialog title="删除" :visible.sync="dialogDelete">
+    <el-dialog title="修改密码" :visible.sync="dialogResetPassword">
 
-      <span >请确认是否删除您的文章?</span>
+    <el-form :rules="rules" ref="dataForm" :model="temp" label-position="left" label-width="70px" style='width: 400px; margin-left:50px;'>
+            
+            <el-form-item :label="$t('table.account')" disabled prop="account">
+              <el-input v-model="temp.account"></el-input>
+            </el-form-item>
+
+            <el-form-item :label="$t('table.password')">
+              <el-input v-model="temp.password" type="password"></el-input>
+            </el-form-item>
+            <el-form-item :label="$t('table.repassword')">
+              <el-input v-model="temp.repassword" type="password"></el-input>
+            </el-form-item>
+
+      </el-form>
 
       <span slot="footer" class="dialog-footer">
-        <el-button @click="dialogDelete = false">{{$t('table.cancel')}}</el-button>
-        <el-button type="primary" @click="handleDelete">{{$t('table.confirm')}}</el-button>
+        <el-button @click="dialogResetPassword = false">{{$t('table.cancel')}}</el-button>
+        <el-button type="primary" @click="handleResetPassword">{{$t('table.confirm')}}</el-button>
       </span>
     </el-dialog>
 
@@ -141,7 +166,7 @@
 
 <script>
 // import { fetchList, deleteArticle } from '@/api/article'
-// import { fetchList as fetchCategory} from '@/api/category'
+import { GetUserList, ResetPassword, UpdateUserState } from '@/api/user'
 import waves from '@/directive/waves' // 水波纹指令
 import { parseTime } from '@/utils'
 
@@ -184,13 +209,9 @@ export default {
       statusOptions: ['published', 'draft', 'deleted'],
       showReviewer: false,
       temp: {
-        id: undefined,
-        importance: 1,
-        remark: '',
-        updatedAt: new Date(),
-        title: '',
-        type: '',
-        author: '',
+        account: '',
+        password: '',
+        repassword: '',
         status: 'published'
       },
       dialogFormVisible: false,
@@ -199,12 +220,12 @@ export default {
         update: 'Edit',
         create: 'Create'
       },
-      dialogDelete: false,
+      dialogResetPassword: false,
       pvData: [],
       rules: {
-        type: [{ required: true, message: 'type is required', trigger: 'change' }],
-        updatedAt: [{ type: 'date', required: true, message: 'timestamp is required', trigger: 'change' }],
-        title: [{ required: true, message: 'title is required', trigger: 'blur' }]
+        // type: [{ required: true, message: 'type is required', trigger: 'change' }],
+        // updatedAt: [{ type: 'date', required: true, message: 'timestamp is required', trigger: 'change' }],
+        // title: [{ required: true, message: 'title is required', trigger: 'blur' }]
       },
       downloadLoading: false
     }
@@ -223,26 +244,17 @@ export default {
     }
   },
   created() {
-
-    // fetchCategory({limit:100, page:0}).then(response => {
-    //     this.typeOptions = response.data.items;
-    //     this.getList()
-    //   }).catch(err => {
-    //     this.fetchSuccess = false
-    //     console.log(err)
-    //   })
-
-    
+      this.getList()
   },
   methods: {
     getList() {
       var self = this
       self.listLoading = true
-      // fetchList(self.listQuery).then(response => {
-      //   self.list = response.data.items
-      //   self.total = response.data.total
-      //   self.listLoading = false
-      // })
+      GetUserList({}).then(response => {
+        self.list = response.data.data
+        self.total = response.data.total
+        self.listLoading = false
+      })
     },
     handleFilter() {
       this.listQuery.page = 1
@@ -258,41 +270,33 @@ export default {
       this.getList()
     },
 
-    handleModifyStatus(row, show) {
-      // showCategory({show:show}).then(response => {
-      //   this.$message({
-      //     message: '操作成功',
-      //     type: 'success'
-      //   })
-      //   row.show = show
-      // }).catch(err => {
-      //   this.$message({
-      //     message: '操作失败',
-      //     type: 'warning'
-      //   })
-      //   console.log(err)
-      // })
+    handleModifyStatus(row, state) {
+      UpdateUserState({state:state}).then(response => {
+        this.$message({message: '操作成功',type: 'success'})
+        row.state = state
+      }).catch(err => {
+        this.$message({message: '操作失败',type: 'warning'})
+        console.log(err)
+      })
 
 
     },
     resetTemp() {
       this.temp = {
-        id: undefined,
-        importance: 1,
-        remark: '',
-        timestamp: new Date(),
-        title: '',
-        status: 'published',
-        type: ''
+        account: '',
+        password: '',
+        repassword: '',
+        status: 'published'
       }
     },
-    handleCreate() {
+    handleModifyPassword(row) {
       this.resetTemp()
       this.dialogStatus = 'create'
-      this.dialogFormVisible = true
-      this.$nextTick(() => {
-        this.$refs['dataForm'].clearValidate()
-      })
+      this.dialogResetPassword = true
+      this.temp.account = row.account
+      // this.$nextTick(() => {
+      //   this.$refs['dataForm'].clearValidate()
+      // })
     },
     createData() {
       this.$refs['dataForm'].validate((valid) => {
@@ -345,28 +349,33 @@ export default {
         }
       })
     },
-    handleDelete(id) {
+    handleResetPassword() {
 
-      // deleteArticle({ id: this.currentRow._id }).then(response => {
-      //   this.$notify({
-      //     title: '成功',
-      //     message: '删除成功',
-      //     type: 'success',
-      //     duration: 2000
-      //   })
-      //   const index = this.list.indexOf(this.currentRow)
-      //   this.list.splice(index, 1)
-      // }).catch(err => {
-      //   this.$notify({
-      //     title: '失败',
-      //     message: '删除失败',
-      //     type: 'warning',
-      //     duration: 2000
-      //   })
-      //   console.log(err)
-      // })
+      if(this.temp.password != this.temp.repassword){
+          this.$message({message: '密码不一致',type: 'warning'})
+          return 
+      }
 
-      this.dialogDelete = false
+      ResetPassword({ account: this.temp.account }).then(response => {
+        this.$notify({
+          title: '成功',
+          message: '修改密码成功',
+          type: 'success',
+          duration: 2000
+        })
+        const index = this.list.indexOf(this.currentRow)
+        this.list.splice(index, 1)
+      }).catch(err => {
+        this.$notify({
+          title: '失败',
+          message: '修改密码失败',
+          type: 'warning',
+          duration: 2000
+        })
+        console.log(err)
+      })
+
+      this.dialogResetPassword = false
     },
     handleConfirmDelete(row){
       this.currentRow = row

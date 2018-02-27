@@ -29,6 +29,11 @@ Mock.mock(/\/transaction\/list/, 'get', transactionAPI.getList)
 
 //user
 Mock.mock(/\/user\/GetRoleList/, 'post', userAPI.GetRoleList)
+Mock.mock(/\/user\/Register/, 'post', userAPI.Register)
+Mock.mock(/\/user\/GetUserList/, 'post', userAPI.GetUserList)
+Mock.mock(/\/user\/ResetPassword/, 'post', userAPI.ResetPassword)
+Mock.mock(/\/user\/UpdateUserState/, 'post', userAPI.UpdateUserState)
+
 
 
 

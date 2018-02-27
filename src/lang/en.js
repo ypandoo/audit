@@ -112,6 +112,12 @@ export default {
     role: 'Role',
     mobile: 'Mobile',
     password: 'Password',
+    repassword: 'Confirm Password',
+    userName: 'User Name',
+    account: 'Account',
+    email: 'EMail',
+    createDate: 'Create Date',
+    updateDate: 'Update Date'
   },
   errorLog: {
     tips: 'Please click the bug icon in the upper right corner',

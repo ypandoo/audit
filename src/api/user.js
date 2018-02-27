@@ -16,3 +16,29 @@ export function Register(query) {
   })
 }
 
+export function GetUserList(query) {
+  return request({
+    url: '/user/GetUserList',
+    method: 'post',
+    params: query
+  })
+}
+
+export function ResetPassword(query) {
+  return request({
+    url: '/user/ResetPassword',
+    method: 'post',
+    params: query
+  })
+}
+
+export function UpdateUserState(query) {
+  return request({
+    url: '/user/UpdateUserState',
+    method: 'post',
+    params: query
+  })
+}
+
+
+

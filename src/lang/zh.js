@@ -112,6 +112,12 @@ export default {
     role: '角色',
     mobile: '手机',
     password: '密码',
+    repassword: '确认密码',
+    userName: '用户名',
+    account: '账户名',
+    email: 'EMail',
+    createDate: '创建时间',
+    updateDate: '更新时间'
   },
   errorLog: {
     tips: '请点击右上角bug小图标',
