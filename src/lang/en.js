@@ -49,7 +49,12 @@ export default {
     exportZip: 'Export Zip',
     theme: 'Theme',
     clipboardDemo: 'Clipboard',
-    i18n: 'I18n'
+    i18n: 'I18n',
+    audit: 'Audit',
+    auditList: 'Audit List',
+    auditDetail: 'Audit Detail',
+    statistics: 'Statistics',
+    userProfile: 'User Profile'
   },
   navbar: {
     logOut: 'Log Out',
@@ -117,7 +122,14 @@ export default {
     account: 'Account',
     email: 'EMail',
     createDate: 'Create Date',
-    updateDate: 'Update Date'
+    updateDate: 'Update Date',
+    imageId: 'ImageId',
+    customerName: 'Customer',
+    imageState: 'State',
+    screeningUserName1: 'Auditor1',
+    screeningUserName2: 'Auditor2',
+    screeningDate: 'Screening Date',
+    uploadDate: 'Upload Date'
   },
   errorLog: {
     tips: 'Please click the bug icon in the upper right corner',

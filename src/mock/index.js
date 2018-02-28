@@ -4,6 +4,7 @@ import articleAPI from './article'
 import userAPI from './user'
 import remoteSearchAPI from './remoteSearch'
 import transactionAPI from './transaction'
+import screeningAPI from './screening'
 
 // Mock.setup({
 //   timeout: '350-600'
@@ -34,6 +35,11 @@ Mock.mock(/\/user\/GetUserList/, 'post', userAPI.GetUserList)
 Mock.mock(/\/user\/ResetPassword/, 'post', userAPI.ResetPassword)
 Mock.mock(/\/user\/UpdateUserState/, 'post', userAPI.UpdateUserState)
 
+//screening
+Mock.mock(/\/screening\/GetScreeningList/, 'post', screeningAPI.GetScreeningList)
+Mock.mock(/\/screening\/GetScreeningItem/, 'post', screeningAPI.GetScreeningItem)
+Mock.mock(/\/screening\/postScreeningResult/, 'post', screeningAPI.postScreeningResult)
+Mock.mock(/\/screening\/ScreeningSummary/, 'post', screeningAPI.ScreeningSummary)
 
 
 

@@ -49,7 +49,12 @@ export default {
     exportZip: 'Export Zip',
     theme: '换肤',
     clipboardDemo: 'Clipboard',
-    i18n: '国际化'
+    i18n: '国际化',
+    audit: '图片审核',
+    auditList: '审核列表',
+    auditDetail: '审核详情',
+    statistics: '审核统计',
+    userProfile: '修改资料'
   },
   navbar: {
     logOut: '退出登录',
@@ -117,7 +122,16 @@ export default {
     account: '账户名',
     email: 'EMail',
     createDate: '创建时间',
-    updateDate: '更新时间'
+    updateDate: '更新时间',
+    audit: '图片审核',
+    auditDetail: '审核详情',
+    imageId: '图片编号',
+    customerName: '客户',
+    imageState: '图片状态',
+    screeningUserName1: '审核员一',
+    screeningUserName2: '审核员二',
+    screeningDate: '审核日期',
+    uploadDate: '上传日期',
   },
   errorLog: {
     tips: '请点击右上角bug小图标',
