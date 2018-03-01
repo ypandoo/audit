@@ -3,37 +3,31 @@
     <div class="filter-container">
       
       <span class="gap-right"> 上传日期 </span>
-      <el-date-picker v-model="listQuery.display_time" type="date" format="yyyy-MM-dd" placeholder="选择开始日期">
+      <el-date-picker v-model="listQuery.upload_start_time" type="date" format="yyyy-MM-dd" placeholder="选择开始日期">
       </el-date-picker>
 
-      <el-date-picker v-model="listQuery.display_time" type="date" format="yyyy-MM-dd" placeholder="选择结束日期">
+      <el-date-picker v-model="listQuery.upload_end_time" type="date" format="yyyy-MM-dd" placeholder="选择结束日期">
       </el-date-picker>
 
       <span class="gap-left gap-right"> 审核日期 </span>
-      <el-date-picker v-model="listQuery.display_time" type="date" format="yyyy-MM-dd" placeholder="选择开始日期">
+      <el-date-picker :disabled="listQuery.imageState == 'IMPORTED'" v-model="listQuery.audit_start_time" type="date" format="yyyy-MM-dd" placeholder="选择开始日期">
       </el-date-picker>
 
-      <el-date-picker v-model="listQuery.display_time" type="date" format="yyyy-MM-dd" placeholder="选择结束日期">
+      <el-date-picker :disabled="listQuery.imageState == 'IMPORTED'" v-model="listQuery.audit_end_time" type="date" format="yyyy-MM-dd" placeholder="选择结束日期">
       </el-date-picker>
 
     </div>
 
     <div class="filter-container">
       <span class="gap-right"> 审核银行 </span>
-      <el-select clearable style="width: 445px" class="filter-item" v-model="listQuery.importance" :placeholder="$t('table.importance')">
-        <el-option v-for="item in importanceOptions" :key="item" :label="item" :value="item">
-        </el-option>
-      </el-select> 
-
-      <span class="gap-left gap-right"> 审核人 &nbsp; &nbsp; </span>
-      <el-select clearable class="filter-item" style="width: 150px" v-model="listQuery.type" :placeholder="$t('table.type')">
-        <el-option v-for="item in  typeOptions" :key="item._id" :label="item.title" :value="item._id">
+      <el-select clearable style="width: 445px" class="filter-item" v-model="listQuery.customerName" :placeholder="'银行'">
+        <el-option v-for="item in bankList" :key="item.id" :label="item.ident" :value="item.id">
         </el-option>
       </el-select> 
 
       <span class="gap-left gap-right"> 图片状态 </span>
-      <el-select @change='handleFilter' style="width: 140px" class="filter-item" v-model="listQuery.sort">
-        <el-option v-for="item in sortOptions" :key="item.key" :label="item.label" :value="item.key">
+      <el-select @change='handleFilter' style="width: 445px" class="filter-item" v-model="listQuery.imageState">
+        <el-option v-for="item in stateList" :key="item.key" :label="item.display_name" :value="item.key">
         </el-option>
       </el-select>
 
@@ -42,7 +36,7 @@
     </div>
 
     <el-table :key='tableKey' :data="list" v-loading="listLoading" element-loading-text="给我一点时间" border fit highlight-current-row
-      style="width: 100%">
+      style="width: 100%" :row-class-name="tableRowClassName">
       <el-table-column align="center" :label="$t('table.imageId')" width="240">
         <template slot-scope="scope">
           <span>{{scope.row.imageId}}</span>
@@ -63,7 +57,7 @@
 
       <el-table-column width="160" align="center" :label="$t('table.imageState')">
         <template slot-scope="scope">
-          <span>{{scope.row.imageState}}</span>
+          <span>{{scope.row.imageState | imageStateFilter}}</span>
         </template>
       </el-table-column>
 
@@ -90,109 +84,28 @@
           <span>{{scope.row.screeningDate | parseTime('{y}-{m}-{d} {h}:{i}') }}</span>
         </template>
       </el-table-column>
-      <!-- <el-table-column width="80px" :label="$t('table.importance')">
-        <template slot-scope="scope">
-          <svg-icon v-for="n in +scope.row.importance" icon-class="star" class="meta-item__icon" :key="n"></svg-icon>
-        </template>
-      </el-table-column> -->
-      <!-- <el-table-column align="center" :label="$t('table.readings')" width="95">
-        <template slot-scope="scope">
-          <span v-if="scope.row.pageviews" class="link-type" @click='handleFetchPv(scope.row.pageviews)'>{{scope.row.pageviews}}</span>
-          <span v-else>0</span>
-        </template>
-      </el-table-column>
-      <el-table-column class-name="status-col" :label="$t('table.status')" width="100">
-        <template slot-scope="scope">
-          <el-tag :type="scope.row.status | statusFilter">{{scope.row.status}}</el-tag>
-        </template>
-      </el-table-column> -->
+
       <el-table-column align="center" :label="$t('table.actions')"  class-name="small-padding fixed-width">
         <template slot-scope="scope">
           <router-link :to="'auditDetail/'+scope.row.imageId" class="link-type" style="margin-right:20px" >审核</router-link>
-          <!-- <el-button type="danger" size="mini" @click="handleConfirmDelete(scope.row)">{{$t('table.delete')}}</el-button> -->
-          <!-- <el-button v-if="scope.row.status!='published'" size="mini" type="success" @click="handleModifyStatus(scope.row,'published')">{{$t('table.publish')}}
-          </el-button> -->
-          <!-- <el-button size="mini" type="primary" @click="handleModifyPassword(scope.row)" style="width:80px">修改密码
-          </el-button>
-          <el-button size="mini" type="primary" :disabled="scope.row.state == 'active'" @click="handleModifyStatus(scope.row, 'active')">启用 
-          </el-button>
-          <el-button size="mini" type="danger"  :disabled="scope.row.state == 'inactive'" @click="handleModifyStatus(scope.row, 'inactive')">停用
-          </el-button> -->
         </template>
       </el-table-column>
     </el-table>
 
-    <!-- <div class="pagination-container">
+    <div class="pagination-container">
       <el-pagination background @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page.sync="listQuery.page"
-        :page-sizes="[10,20,30, 50]" :page-size="listQuery.limit" layout="total, sizes, prev, pager, next, jumper" :total="total">
+        :page-sizes="[10, 20, 30, 50]" :page-size="listQuery.limit" layout="total, sizes, prev, pager, next, jumper" :total="total">
       </el-pagination>
-    </div> -->
-
-    <!-- <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible">
-      <el-form :rules="rules" ref="dataForm" :model="temp" label-position="left" label-width="70px" style='width: 400px; margin-left:50px;'>
-        <el-form-item :label="$t('table.type')" prop="type">
-          <el-select class="filter-item" v-model="temp.type" placeholder="Please select">
-            <el-option v-for="item in  calendarTypeOptions" :key="item.key" :label="item.display_name" :value="item.key">
-            </el-option>
-          </el-select>
-        </el-form-item>
-        <el-form-item :label="$t('table.date')" prop="timestamp">
-          <el-date-picker v-model="temp.timestamp" type="datetime" placeholder="Please pick a date">
-          </el-date-picker>
-        </el-form-item>
-        <el-form-item :label="$t('table.title')" prop="title">
-          <el-input v-model="temp.title"></el-input>
-        </el-form-item>
-        <el-form-item :label="$t('table.status')">
-          <el-select class="filter-item" v-model="temp.status" placeholder="Please select">
-            <el-option v-for="item in  statusOptions" :key="item" :label="item" :value="item">
-            </el-option>
-          </el-select>
-        </el-form-item>
-        <el-form-item :label="$t('table.importance')">
-          <el-rate style="margin-top:8px;" v-model="temp.importance" :colors="['#99A9BF', '#F7BA2A', '#FF9900']" :max='3'></el-rate>
-        </el-form-item>
-        <el-form-item :label="$t('table.remark')">
-          <el-input type="textarea" :autosize="{ minRows: 2, maxRows: 4}" placeholder="Please input" v-model="temp.remark">
-          </el-input>
-        </el-form-item>
-      </el-form>
-      <div slot="footer" class="dialog-footer">
-        <el-button @click="dialogFormVisible = false">{{$t('table.cancel')}}</el-button>
-        <el-button v-if="dialogStatus=='create'" type="primary" @click="createData">{{$t('table.confirm')}}</el-button>
-        <el-button v-else type="primary" @click="updateData">{{$t('table.confirm')}}</el-button>
-      </div>
-    </el-dialog> -->
-
-    <!-- <el-dialog title="修改密码" :visible.sync="dialogResetPassword">
-
-    <el-form :rules="rules" ref="dataForm" :model="temp" label-position="left" label-width="70px" style='width: 400px; margin-left:50px;'>
-            
-            <el-form-item :label="$t('table.account')" disabled prop="account">
-              <el-input v-model="temp.account"></el-input>
-            </el-form-item>
-
-            <el-form-item :label="$t('table.password')">
-              <el-input v-model="temp.password" type="password"></el-input>
-            </el-form-item>
-            <el-form-item :label="$t('table.repassword')">
-              <el-input v-model="temp.repassword" type="password"></el-input>
-            </el-form-item>
-
-      </el-form>
-
-      <span slot="footer" class="dialog-footer">
-        <el-button @click="dialogResetPassword = false">{{$t('table.cancel')}}</el-button>
-        <el-button type="primary" @click="handleResetPassword">{{$t('table.confirm')}}</el-button>
-      </span>
-    </el-dialog> -->
+    </div>
 
   </div>
 </template>
 
 <script>
 // import { fetchList, deleteArticle } from '@/api/article'
-import { GetScreeningList} from '@/api/screening'
+import { GetScreeningList, GetBankList} from '@/api/screening'
+import { GetUserList} from '@/api/user'
+var moment = require('moment')
 import waves from '@/directive/waves' // 水波纹指令
 import { parseTime } from '@/utils'
 
@@ -201,6 +114,13 @@ const calendarTypeOptions = [
   { key: 'US', display_name: 'USA' },
   { key: 'JP', display_name: 'Japan' },
   { key: 'EU', display_name: 'Eurozone' }
+]
+
+const stateOptions = [
+  { key: 'IMPORTED', display_name: '未审核' },
+  { key: 'PARTIAL_ACCEPTED', display_name: '部分审核' },
+  { key: 'ACCEPTED', display_name: '审核通过' },
+  { key: 'REJECTED', display_name: '审核驳回' }
 ]
 
 // arr to obj ,such as { CN : "China", US : "USA" }
@@ -218,17 +138,24 @@ export default {
     return {
       tableKey: 0,
       list: null,
-      total: null,
+      total: 1,
       listLoading: true,
       currentRow: {},
       listQuery: {
         page: 1,
         limit: 20,
+        upload_start_time : new Date(),
+        upload_end_time : new Date(),
+        audit_start_time: '',
+        audit_end_time: '',
+        customerName: '',
         // importance: undefined,
         // title: undefined,
         // type: undefined,
         // sort: '+id'
       },
+      bankList: {},
+      stateList: stateOptions,
       importanceOptions: [1, 2, 3],
       typeOptions: {},
       sortOptions: [{ label: 'ID Ascending', key: '+id' }, { label: 'ID Descending', key: '-id' }],
@@ -265,20 +192,54 @@ export default {
       }
       return statusMap[status]
     },
+    imageStateFilter(status){
+      const statusMap = {'IMPORTED':'未审核' ,
+                        'PARTIAL_ACCEPTED':'部分审核' ,
+                        'ACCEPTED':'审核通过' ,
+                        'REJECTED':'审核驳回' }
+
+      return statusMap[status]
+    },
     typeFilter(type) {
       return calendarTypeKeyValue[type]
     }
   },
   created() {
-      this.getList()
+      //role id auditor
+      GetBankList().then(response => {
+        this.bankList = response.data.data;
+        this.listQuery.imageState = 'IMPORTED';
+        this.getList();
+      }).catch(err => {
+      this.$notify({
+        title: '失败',
+        message: '获取银行列表失败',
+        type: 'warning',
+        duration: 2000
+      })
+      console.log(err)
+    })
+
+      //this.getList()
   },
   methods: {
+    tableRowClassName({row, rowIndex}) {
+        var ONE_HOUR = 60 * 60 * 1000
+        var currentDate = new Date()
+        var dt =  new Date(parseInt(row.screeningDate)*1000)
+        if(currentDate - dt > ONE_HOUR*12)
+        {
+          return 'warning-row';
+        } 
+        return '';
+    },
+
     getList() {
       var self = this
       self.listLoading = true
-      GetScreeningList({}).then(response => {
-        self.list = response.data.data
-        self.total = response.data.total
+      GetScreeningList(this.listQuery).then(response => {
+        self.list = response.data.data.list
+        self.total = response.data.data.pagination.total
         self.listLoading = false
       })
     },
@@ -436,7 +397,7 @@ export default {
 }
 </script>
 
-<style rel="stylesheet/scss" lang="scss" scoped>
+<style rel="stylesheet/scss" lang="scss">
 .gap-left{
   margin-left: 60px;
 }
@@ -444,4 +405,12 @@ export default {
 .gap-right{
   margin-right: 20px;
 }
+
+.warning-row {
+    color:red !important;
+  }
+
+.success-row {
+    background: #f0f9eb;
+  }
 </style>

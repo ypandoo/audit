@@ -23,14 +23,14 @@
             <div class="postInfo-container">
               <el-row>
                 <el-col :span="12">
-                    <el-form-item label-width="100px" label="账户(2-20个字符):" class="postInfo-container-item" prop="account" >
+                    <el-form-item label-width="100px" label="账户(6-12个英文或数字):" class="postInfo-container-item" prop="account" >
                       <el-input placeholder="账户" :disabled="isEdit" style='min-width:400px;' v-model="postForm.account" >
                       </el-input>
                     </el-form-item>
                 </el-col>
 
                 <el-col :span="12">
-                    <el-form-item label-width="100px" label="用户名(2-20个字符):" class="postInfo-container-item" prop="username" >
+                    <el-form-item label-width="100px" label="用户名(2-12个字符):" class="postInfo-container-item" prop="username" >
                       <el-input placeholder="用户名" :disabled="isEdit" style='min-width:400px;' v-model="postForm.username">
                       </el-input>
                     </el-form-item>
@@ -46,7 +46,7 @@
                 </el-col>
 
                 <el-col :span="12">
-                    <el-form-item label-width="100px" label="手机号(11位):" class="postInfo-container-item" prop="mobile" >
+                    <el-form-item label-width="100px" label="手机号(11位数字):" class="postInfo-container-item" prop="mobile" >
                       <el-input placeholder="手机号" style='min-width:400px;' v-model="postForm.mobile" >
                       </el-input>
                     </el-form-item>
@@ -55,14 +55,14 @@
 
               <el-row>
                 <el-col :span="12">
-                    <el-form-item label-width="100px" label="密码(6-10个字符):" class="postInfo-container-item" prop="password">
+                    <el-form-item label-width="100px" label="密码(6-12个字符):" class="postInfo-container-item" prop="password">
                       <el-input placeholder="密码" style='min-width:400px;' v-model="postForm.password" type="password" >
                       </el-input>
                     </el-form-item>
                 </el-col>
 
                 <el-col :span="12">
-                    <el-form-item label-width="100px" label="确认密码:" class="postInfo-container-item" prop="repassword">
+                    <el-form-item label-width="100px" label="确认密码(6-12个字符):" class="postInfo-container-item" prop="repassword">
                       <el-input placeholder="确认密码" style='min-width:400px;' v-model="postForm.repassword" type="password" >
                       </el-input>
                     </el-form-item>
@@ -126,7 +126,8 @@ import { validateURL } from '@/utils/validate'
 // import { fetchArticle, createArticle, updateArticle } from '@/api/article'
 // import { fetchList as fetchCategory} from '@/api/category'
 import { userSearch } from '@/api/remoteSearch'
-import { GetRoleList, Register } from '@/api/user'
+import { GetRoleList, Register, ModifyUserInfo, GetUserProfile } from '@/api/user'
+import validator from 'validator';
 
 const defaultForm = {
   status: 'draft',
@@ -155,24 +156,123 @@ export default {
           message: '内容未填写完整',
           type: 'error'
         })
-        callback(null)
+        //callback(null)
       } else {
         callback()
       }
     }
 
+    const accountCheck  = (rule, value, callback) => {
+      if (value === '') {
+        this.$message({message: '账户未填写完整',type: 'error'})
+        //callback(null)
+        return
+      } 
+      if (!validator.isAlphanumeric(value)) {
+        this.$message({message: '账户名只能是数字和字母',type: 'error'})
+        //callback(null)
+        return
+      }
+      if (!validator.isLength(value,{min:6, max:12})) {
+        this.$message({message: '账户名为6-12位字符',type: 'error'})
+        //callback(null)
+        return
+      }  
+
+      callback()
+    } 
+
+    const mobileCheck  = (rule, value, callback) => {
+      if (value === '') {
+        this.$message({message: '手机号未填写完整',type: 'error'})
+        //callback(null)
+        return
+      } 
+      if (!validator.isNumeric(value)) {
+        this.$message({message: '手机号只能是数字',type: 'error'})
+        //callback(null)
+        return
+      }
+      if (!validator.isLength(value,{min:11, max:11})) {
+        this.$message({message: '手机号只能为11位',type: 'error'})
+        //callback(null)
+        return
+      }  
+
+      callback()
+    } 
+
+    const passwordCheck  = (rule, value, callback) => {
+      if (value === '') {
+        this.$message({message: '密码未填写完整',type: 'error'})
+        //callback(null)
+        return
+      } 
+      if (!validator.isNumeric(value)) {
+        this.$message({message: '密码只能是数字',type: 'error'})
+        //callback(null)
+        return
+      }
+      if (!validator.isLength(value,{min:6, max:12})) {
+        this.$message({message: '密码为6-12位',type: 'error'})
+        //callback(null)
+        return
+      }  
+
+      callback()
+    } 
+
+    const nameCheck  = (rule, value, callback) => {
+      if (value === '') {
+        this.$message({message: '用户名未填写完整',type: 'error'})
+        //callback(null)
+        return
+      } 
+      // if (!validator.isAlphanumeric(value)) {
+      //   this.$message({message: '账户名只能是数字和字母',type: 'error'})
+      //   callback(null)
+      //   return
+      // }
+      if (!validator.isLength(value,{min:2, max:12})) {
+        this.$message({message: '用户名为2-12位字符',type: 'error'})
+        //callback(null)
+        return
+      }  
+
+      callback()
+    } 
+
+    const emailCheck  = (rule, value, callback) => {
+      if (value === '') {
+        this.$message({message: 'email未填写完整',type: 'error'})
+        //callback(null)
+        return
+      } 
+      if (!validator.isEmail(value)) {
+        this.$message({message: '非法的email账户名',type: 'error'})
+        //callback(null)
+        return
+      }
+      // if (!validator.isLength(value,{min:4, max:12})) {
+      //   this.$message({message: '用户名为4-12位字符',type: 'error'})
+      //   callback(null)
+      //   return
+      // }  
+
+      callback()
+    } 
     return {
       postForm: Object.assign({}, defaultForm),
       fetchSuccess: true,
       loading: false,
       typeOptions: {},
       rules: {
-        username: [{ required: true, validator: validateRequire }],
-        password: [{ required: true, validator: validateRequire }],
-        email: [{ required: true, validator: validateRequire }],
-        account: [{ required: true, validator: validateRequire }],
-        repassword: [{ required: true, validator: validateRequire }],
-        mobile: [{ required: true, validator: validateRequire }],
+        username: [{ required: true, validator: nameCheck }],
+        password: [{ required: true, validator: passwordCheck }],
+        email: [{ required: true, validator: emailCheck }],
+        account: [{ required: true, validator: accountCheck }],
+        repassword: [{ required: true, validator: passwordCheck }],
+        mobile: [{ required: true, validator: mobileCheck }],
         role: [{ required: true, validator: validateRequire }],
       }
     }
@@ -193,17 +293,18 @@ export default {
   },
   methods: {
     fetchData() {
-        // fetchArticle({ id: this.$route.params.id }).then(response => {
-        //   this.postForm.title = response.data.item.title
-        //   this.postForm.image_uri = response.data.item.url
-        //   this.postForm.content_short = response.data.item.desc
-        //   this.postForm.content = response.data.item.content
-        //   this.postForm.author = response.data.item.author
-        //   this.postForm.type = response.data.item.type
-        // }).catch(err => {
-        //   this.fetchSuccess = false
-        //   console.log(err)
-        // })
+        GetUserProfile({ account: this.$store.getters.token }).then(response => {
+          this.postForm.account = response.data.data.account
+          this.postForm.password = response.data.data.password
+          this.postForm.repassword = response.data.data.password
+          this.postForm.mobile = response.data.data.mobile
+          this.postForm.username = response.data.data.username
+          this.postForm.email = response.data.data.email
+          this.postForm.role = response.data.data.roleId
+        }).catch(err => {
+          this.fetchSuccess = false
+          console.log(err)
+        })
     },
     submitForm() {
       // this.postForm.display_time = parseInt(this.display_time / 1000)
@@ -222,45 +323,43 @@ export default {
           this.loading = true
           if (this.isEdit) {
             const submitData = {
-              'title': self.postForm.title,
-              'desc': self.postForm.content_short,
-              'url': self.postForm.image_uri,
-              'id': this.$route.params.id,
-              'content' : self.postForm.content,
-              'author': self.postForm.author,
-              'type': self.postForm.type
+              // 'account': self.postForm.account,
+              'username': self.postForm.username,
+              'mobile' : self.postForm.mobile,
+              'password': self.postForm.password,
+              'email': self.postForm.email
             }
 
             // add new article
-            // updateArticle(submitData).then(response => {
-            //   if (response.data.error_code === 0) {
-            //     this.$notify({
-            //       title: '成功',
-            //       message: '文章修改成功',
-            //       type: 'success',
-            //       duration: 2000
-            //     })
-            //     this.postForm.status = 'published'
-            //   } else {
-            //     this.$message({
-            //       message: response.data.msg,
-            //       type: 'warning'
-            //     })
-            //   }
-            //   this.loading = false
-            // }).catch(err => {
-            //   this.$message({
-            //     message: '文章修改失败',
-            //     type: 'warning'
-            //   })
-            //   this.loading = false
-            //   console.log(err)
-            // })
+            ModifyUserInfo(submitData).then(response => {
+              if (response.data.error_code === 0) {
+                this.$notify({
+                  title: '成功',
+                  message: '修改成功',
+                  type: 'success',
+                  duration: 2000
+                })
+                this.postForm.status = 'published'
+              } else {
+                this.$message({
+                  message: response.data.msg,
+                  type: 'warning'
+                })
+              }
+              this.loading = false
+            }).catch(err => {
+              this.$message({
+                message: '修改失败',
+                type: 'warning'
+              })
+              this.loading = false
+              console.log(err)
+            })
           } else {
             const submitData = {
               'account': self.postForm.account,
               'username': self.postForm.username,
-              'role': self.postForm.role,
+              'roleId': self.postForm.role,
               'mobile' : self.postForm.mobile,
               'password': self.postForm.password,
               'email': self.postForm.email

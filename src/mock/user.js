@@ -24,7 +24,7 @@ const userList = {
     {
       account: 'yanglei',
       userName: '杨雷',
-      displayName: '管理员',
+      roleDisplayName: '管理员',
       mobile: '18615707055',
       state: 'active',
       email: 'lei.yang@gi-de.com',
@@ -34,7 +34,7 @@ const userList = {
     {
       account: 'sunguang',
       userName: '孙光',
-      displayName: '审核员',
+      roleDisplayName: '审核员',
       mobile: '18615707056',
       state: 'inactive',
       email: 'lei.yang@gi-de.com',
@@ -42,6 +42,22 @@ const userList = {
       updateDate: '2018-01-01'
     }
   ]
+}
+
+const userProfile ={
+  error_code : 0,
+  data:{
+    account: 'sunguang',
+    username: '孙光',
+    roleDisplayName: '审核员',
+    mobile: '18615707056',
+    state: 'inactive',
+    password: '123456',
+    email: 'lei.yang@gi-de.com',
+    createDate: '2018-01-01',
+    updateDate: '2018-01-01',
+    roleId: 1
+  }
 }
 
 export default {
@@ -70,6 +86,14 @@ export default {
   },
 
   UpdateUserState: data =>{
+    return {  error_code: 0,data:[] } 
+  },
+
+  GetUserProfile: data => {
+    return userProfile
+  },
+
+  ModifyUserInfo: data => {
     return {  error_code: 0,data:[] } 
   },
 

@@ -1,12 +1,19 @@
 import { param2Obj } from '@/utils'
+import { Pagination } from 'element-ui';
 
 const screenList = {
   error_code: 0,
   data:
-  [
+  {
+    pagination:{
+      total: 10,
+      currentPage: 1,
+      pageSize: 10
+    },
+    list:[
     {
       imageId: '93eeakjdfjal-ea032898',
-      imageState: 'OPENED',
+      imageState: 'IMPORTED',
       screeningUserName2: '田鑫',
       screeningUserName1: '杨雷',
       uploadDate: 1519720007,
@@ -23,8 +30,9 @@ const screenList = {
       screeningDate: 1519720007,
       customerName: '四川工行',
       imageData: 'http://img1.3lian.com/img013/v4/96/d/41.jpg'
-    }
-  ]
+    }]
+  },
+
 }
 
 const screeningItem = {
@@ -32,7 +40,7 @@ const screeningItem = {
   data:
     {
       imageId: '93eeakjdfjal-ea032898',
-      imageState: 'OPENED',
+      imageState: 'ACCEPTED',
       screeningRecord:[
         {
           userName: '杨雷',
@@ -75,7 +83,17 @@ const screeningSummary = {
   ]
 }
 
-
+const bankList = {
+  error_code: 0,
+  data:
+  [
+    {
+      id: 601,
+      name: 'ICBC',
+      ident : '中国工商银行'
+     }
+  ]
+}
 export default {
 
   GetScreeningList: data => {
@@ -95,5 +113,10 @@ export default {
   },
   ScreeningSummary: data => {
     return screeningSummary
+  },
+
+  
+  GetBankList: data => {
+    return bankList
   },
 }

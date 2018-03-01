@@ -24,7 +24,7 @@
 
       <el-table-column width="160"  align="center" :label="$t('table.imageState')">
         <template slot-scope="scope">
-          <span>{{scope.row.imageState}}</span>
+          <span>{{scope.row.imageState | imageStateFilter}}</span>
         </template>
       </el-table-column>
 
@@ -55,7 +55,7 @@
 
       <el-table-column align="center" :label="'审核结果'" width="240">
         <template slot-scope="scope">
-           <span>{{scope.row.screeningResult}}</span>
+           <span>{{scope.row.screeningResult | imageStateFilter}}</span>
         </template>
       </el-table-column>
 
@@ -187,7 +187,15 @@ export default {
     },
     typeFilter(type) {
       return calendarTypeKeyValue[type]
-    }
+    },
+        imageStateFilter(status){
+      const statusMap = {'IMPORTED':'未审核' ,
+                        'PARTIAL_ACCEPTED':'部分审核' ,
+                        'ACCEPTED':'审核通过' ,
+                        'REJECTED':'审核驳回' }
+
+      return statusMap[status]
+    },
   },
   created() {
       this.getList()

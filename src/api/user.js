@@ -40,5 +40,21 @@ export function UpdateUserState(query) {
   })
 }
 
+export function ModifyUserInfo(query) {
+  return request({
+    url: '/user/ModifyUserInfo',
+    method: 'post',
+    params: query
+  })
+}
+
+export function GetUserProfile(query) {
+  return request({
+    url: '/user/GetUserProfile',
+    method: 'post',
+    params: query
+  })
+}
+
 
 

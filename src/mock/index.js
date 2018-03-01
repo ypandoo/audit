@@ -18,6 +18,7 @@ Mock.mock(/\/user\/info\.*/, 'get', loginAPI.getUserInfo)
 Mock.mock(/\/auth\/Login/, 'post', loginAPI.Login)
 Mock.mock(/\/auth\/CurrentUser/, 'post', loginAPI.CurrentUser)
 
+
 // 文章相关
 Mock.mock(/\/article\/list/, 'get', articleAPI.getList)
 Mock.mock(/\/article\/detail/, 'get', articleAPI.getArticle)
@@ -37,12 +38,16 @@ Mock.mock(/\/user\/Register/, 'post', userAPI.Register)
 Mock.mock(/\/user\/GetUserList/, 'post', userAPI.GetUserList)
 Mock.mock(/\/user\/ResetPassword/, 'post', userAPI.ResetPassword)
 Mock.mock(/\/user\/UpdateUserState/, 'post', userAPI.UpdateUserState)
+Mock.mock(/\/user\/GetUserProfile/, 'post', userAPI.GetUserProfile)
+Mock.mock(/\/user\/ModifyUserInfo/, 'post', userAPI.ModifyUserInfo)
 
 //screening
 Mock.mock(/\/screening\/GetScreeningList/, 'post', screeningAPI.GetScreeningList)
 Mock.mock(/\/screening\/GetScreeningItem/, 'post', screeningAPI.GetScreeningItem)
 Mock.mock(/\/screening\/postScreeningResult/, 'post', screeningAPI.postScreeningResult)
 Mock.mock(/\/screening\/ScreeningSummary/, 'post', screeningAPI.ScreeningSummary)
+Mock.mock(/\/screening\/GetBankList/, 'post', screeningAPI.GetBankList)
+
 
 
 

@@ -36,5 +36,13 @@ export function ScreeningSummary(query) {
   })
 }
 
+export function GetBankList(query) {
+  return request({
+    url: '/screening/GetBankList',
+    method: 'post',
+    params: query
+  })
+}
+
 
 
