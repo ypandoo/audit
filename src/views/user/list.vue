@@ -142,8 +142,8 @@
 
     <el-form :rules="rules" ref="dataForm" :model="temp" label-position="left" label-width="70px" style='width: 400px; margin-left:50px;'>
             
-            <el-form-item :label="$t('table.account')" disabled prop="account">
-              <el-input v-model="temp.account"></el-input>
+            <el-form-item :label="$t('table.account')"  prop="account">
+              <el-input v-model="temp.account" :disabled="true"></el-input>
             </el-form-item>
 
             <el-form-item :label="$t('table.password')">

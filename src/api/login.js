@@ -27,3 +27,23 @@ export function getUserInfo(token) {
   })
 }
 
+export function Login(username, password) {
+  const data = {
+    username,
+    password
+  }
+  return request({
+    url: '/auth/Login',
+    method: 'post',
+    data
+  })
+}
+
+export function CurrentUser(data) {
+  return request({
+    url: '/auth/CurrentUser',
+    method: 'post',
+    data
+  })
+}
+

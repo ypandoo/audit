@@ -2,8 +2,8 @@
   <div class="login-container">
     <el-form class="login-form" autoComplete="on" :model="loginForm" :rules="loginRules" ref="loginForm" label-position="left">
       <div class="title-container">
-        <h3 class="title">{{$t('login.title')}}</h3>
-        <lang-select class="set-language"></lang-select>
+        <h3 class="title">登录图文卡审核系统</h3>
+        <!-- <lang-select class="set-language"></lang-select> -->
       </div>
       <el-form-item prop="username">
         <span class="svg-container svg-container_login">
@@ -24,16 +24,16 @@
 
       <el-button type="primary" style="width:100%;margin-bottom:30px;" :loading="loading" @click.native.prevent="handleLogin">{{$t('login.logIn')}}</el-button>
 
-      <div class="tips">
+      <!-- <div class="tips">
         <span>{{$t('login.username')}} : admin</span>
         <span>{{$t('login.password')}} : {{$t('login.any')}}</span>
       </div>
       <div class="tips">
         <span style="margin-right:18px;">{{$t('login.username')}} : editor</span>
         <span>{{$t('login.password')}} : {{$t('login.any')}}</span>
-      </div>
+      </div> -->
 
-      <el-button class="thirdparty-button" type="primary" @click="showDialog=true">{{$t('login.thirdparty')}}</el-button>
+      <!-- <el-button class="thirdparty-button" type="primary" @click="showDialog=true">{{$t('login.thirdparty')}}</el-button> -->
     </el-form>
 
     <el-dialog :title="$t('login.thirdparty')" :visible.sync="showDialog" append-to-body>
@@ -57,11 +57,11 @@ export default {
   name: 'login',
   data() {
     const validateUsername = (rule, value, callback) => {
-      if (!isvalidUsername(value)) {
-        callback(new Error('Please enter the correct user name'))
-      } else {
+      // if (!isvalidUsername(value)) {
+      //   callback(new Error('Please enter the correct user name'))
+      // } else {
         callback()
-      }
+      //}
     }
     const validatePassword = (rule, value, callback) => {
       if (value.length < 6) {
@@ -72,7 +72,7 @@ export default {
     }
     return {
       loginForm: {
-        username: 'admin',
+        username: 'yanglei',
         password: '1111111'
       },
       loginRules: {

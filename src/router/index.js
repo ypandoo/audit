@@ -72,12 +72,13 @@ export const asyncRouterMap = [
     meta: {
       title: 'userManage',
       icon: 'user',
-      roles: ['admin']
+      roles: ['admin', 'auditor']
     },
+    alwaysShow: true,
     children: [
-      { path: 'userCreate', component: _import('user/create'), name: 'userCreate', meta: { title: 'userCreate', icon: 'user' }},
-      { path: 'userList', component: _import('user/list'), name: 'userList', meta: { title: 'userList', icon: 'user' }},
-      { path: 'userProfile', component: _import('user/edit'), name: 'userProfile', meta: { title: 'userProfile', icon: 'user' }}
+      { path: 'userCreate', component: _import('user/create'), name: 'userCreate', meta: { title: 'userCreate', icon: 'user' ,  roles: ['admin']}},
+      { path: 'userList', component: _import('user/list'), name: 'userList', meta: { title: 'userList', icon: 'user' ,  roles: ['admin']}},
+      { path: 'userProfile', component: _import('user/edit'), name: 'userProfile', meta: { title: 'userProfile', icon: 'user',  roles: ['admin', 'auditor'] }}
     ]
   },
 
@@ -89,12 +90,13 @@ export const asyncRouterMap = [
     meta: {
       title: 'audit',
       icon: 'peoples',
-      roles: ['admin']
+      roles: ['admin', 'auditor']
     },
+    alwaysShow: true,
     children: [
-      { path: 'auditList', component: _import('audit/list'), name: 'auditList', meta: { title: 'auditList', icon: 'peoples' }},
-      { path: 'auditDetail/:id', hidden: true, component: _import('audit/auditDetail'), name: 'auditDetail', meta: { title: 'auditDetail', icon: 'peoples' }},
-      { path: 'statistics', component: _import('audit/statistics'), name: 'statistics', meta: { title: 'statistics', icon: 'peoples' }},
+      { path: 'auditList',  component: _import('audit/list'), name: 'auditList', meta: { title: 'auditList', icon: 'peoples',roles: ['admin', 'auditor'] }},
+      { path: 'auditDetail/:id', hidden: true, component: _import('audit/auditDetail'), name: 'auditDetail', meta: { title: 'auditDetail', icon: 'peoples',  roles: ['auditor'] }},
+      { path: 'statistics', component: _import('audit/statistics'), name: 'statistics', meta: { title: 'statistics', icon: 'peoples',  roles: ['admin'] }},
     ]
   },
 

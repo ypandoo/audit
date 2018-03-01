@@ -1,4 +1,4 @@
-import { loginByUsername, logout, getUserInfo } from '@/api/login'
+import { logout, Login, CurrentUser } from '@/api/login'
 import { getToken, setToken, removeToken } from '@/utils/auth'
 
 const user = {
@@ -46,13 +46,17 @@ const user = {
   actions: {
     // 用户名登录
     LoginByUsername({ commit }, userInfo) {
-      const username = userInfo.username.trim()
+      const account = userInfo.username.trim()
       return new Promise((resolve, reject) => {
-        loginByUsername(username, userInfo.password).then(response => {
-          const data = response.data
-          commit('SET_TOKEN', data.token)
-          setToken(response.data.token)
-          resolve()
+        Login(account, userInfo.password).then(response => {
+          if(response.data.error_code == 0)
+          {
+            commit('SET_TOKEN', account)
+            setToken(account)
+            resolve()
+          }else{
+            reject('登录失败,请检查用户名和密码')
+          }
         }).catch(error => {
           reject(error)
         })
@@ -62,16 +66,17 @@ const user = {
     // 获取用户信息
     GetUserInfo({ commit, state }) {
       return new Promise((resolve, reject) => {
-        getUserInfo(state.token).then(response => {
-          if (!response.data) { // 由于mockjs 不支持自定义状态码只能这样hack
-            reject('error')
+        CurrentUser(state.token).then(response => {
+          if (response.data.error_code != 0) { // 由于mockjs 不支持自定义状态码只能这样hack
+            reject('获取用户信息失败')
           }
+
           const data = response.data
-          commit('SET_ROLES', data.roles)
-          commit('SET_NAME', data.name)
-          commit('SET_AVATAR', data.avatar)
-          commit('SET_INTRODUCTION', data.introduction)
-          resolve(response)
+          commit('SET_ROLES', [data.data.roleName])
+          commit('SET_NAME', data.data.username)
+          commit('SET_AVATAR', data.data.avatar)
+          // commit('SET_INTRODUCTION', data.introduction)
+          resolve( [data.data.roleName])
         }).catch(error => {
           reject(error)
         })
