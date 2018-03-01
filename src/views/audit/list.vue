@@ -87,7 +87,7 @@
 
       <el-table-column align="center" :label="$t('table.actions')"  class-name="small-padding fixed-width">
         <template slot-scope="scope">
-          <router-link :to="'auditDetail/'+scope.row.imageId" class="link-type" style="margin-right:20px" >审核</router-link>
+          <router-link  v-if="!isAdmin" :to="'auditDetail/'+scope.row.imageId" class="link-type" style="margin-right:20px" >审核</router-link>
         </template>
       </el-table-column>
     </el-table>
@@ -154,6 +154,7 @@ export default {
         // type: undefined,
         // sort: '+id'
       },
+      isAdmin: true,
       bankList: {},
       stateList: stateOptions,
       importanceOptions: [1, 2, 3],
@@ -205,6 +206,11 @@ export default {
     }
   },
   created() {
+      if(this.$store.getters.roles[0] == 'admin')
+        this.isAdmin = true;
+      else
+        this.isAdmin = false;
+
       //role id auditor
       GetBankList().then(response => {
         this.bankList = response.data.data;
