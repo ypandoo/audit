@@ -1,13 +1,13 @@
 <template>
   <div class="dashboard-editor-container">
     <div class=" clearfix">
-      <pan-thumb style="float: left" :image="avatar"> Your roles:
+      <pan-thumb style="float: left" :image="avatar"> 您的角色
         <span class="pan-info-roles" :key='item' v-for="item in roles">{{item}}</span>
       </pan-thumb>
-      <github-corner></github-corner>
+      <!-- <github-corner></github-corner> -->
       <div class="info-container">
         <span class="display_name">{{name}}</span>
-        <span style="font-size:20px;padding-top:20px;display:inline-block;">editor : dashboard</span>
+        <span style="font-size:20px;padding-top:20px;display:inline-block;">角色 : 审核员</span>
       </div>
     </div>
     <div>

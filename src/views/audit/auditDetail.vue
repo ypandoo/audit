@@ -260,6 +260,7 @@ export default {
       PostScreeningResult({itemId: this.$route.params.id, screeningResult:screeningResult, comments: this.reason}).then(response => {
         this.$message({message: '操作成功',type: 'success'})
         self.audited = true
+        this.$router.push({ path: '/audit/auditList' })
       }).catch(err => {
         this.$message({message: '操作失败',type: 'warning'})
         console.log(err)
@@ -292,7 +293,7 @@ h3{
   color:#409eff
 }
 .image{
-      height: 100%;
+      width: 700px;
       padding: 10px
 }
 

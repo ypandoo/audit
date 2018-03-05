@@ -1,110 +1,76 @@
+
 <template>
   <div class="dashboard-editor-container">
-    <!-- <github-corner></github-corner>
-
-    <panel-group @handleSetLineChartData="handleSetLineChartData"></panel-group>
-
-    <el-row style="background:#fff;padding:16px 16px 0;margin-bottom:32px;">
-      <line-chart :chart-data="lineChartData"></line-chart>
-    </el-row>
-
-    <el-row :gutter="32">
-      <el-col :xs="24" :sm="24" :lg="8">
-        <div class="chart-wrapper">
-          <raddar-chart></raddar-chart>
-        </div>
-      </el-col>
-      <el-col :xs="24" :sm="24" :lg="8">
-        <div class="chart-wrapper">
-          <pie-chart></pie-chart>
-        </div>
-      </el-col>
-      <el-col :xs="24" :sm="24" :lg="8">
-        <div class="chart-wrapper">
-          <bar-chart></bar-chart>
-        </div>
-      </el-col>
-    </el-row>
-
-    <el-row :gutter="8">
-      <el-col :xs="{span: 24}" :sm="{span: 24}" :md="{span: 24}" :lg="{span: 12}" :xl="{span: 12}" style="padding-right:8px;margin-bottom:30px;">
-        <transaction-table></transaction-table>
-      </el-col>
-      <el-col :xs="{span: 12}" :sm="{span: 12}" :md="{span: 12}" :lg="{span: 6}" :xl="{span: 5}">
-        <todo-list></todo-list>
-      </el-col>
-      <el-col :xs="{span: 12}" :sm="{span: 12}" :md="{span: 12}" :lg="{span: 6}" :xl="{span: 5}">
-        <box-card></box-card>
-      </el-col>
-    </el-row> -->
-
+    <div class=" clearfix">
+      <pan-thumb style="float: left" :image="avatar"> 您的角色
+        <span class="pan-info-roles" :key='item' v-for="item in roles">{{item}}</span>
+      </pan-thumb>
+      <!-- <github-corner></github-corner> -->
+      <div class="info-container">
+        <span class="display_name">{{name}}</span>
+        <span style="font-size:20px;padding-top:20px;display:inline-block;">角色 : 管理员</span>
+      </div>
+    </div>
+    <div>
+      <img class="emptyGif" :src="emptyGif">
+    </div>
   </div>
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
+import PanThumb from '@/components/PanThumb'
 import GithubCorner from '@/components/GithubCorner'
-import PanelGroup from './components/PanelGroup'
-import LineChart from './components/LineChart'
-import RaddarChart from './components/RaddarChart'
-import PieChart from './components/PieChart'
-import BarChart from './components/BarChart'
-import TransactionTable from './components/TransactionTable'
-import TodoList from './components/TodoList'
-import BoxCard from './components/BoxCard'
-
-const lineChartData = {
-  newVisitis: {
-    expectedData: [100, 120, 161, 134, 105, 160, 165],
-    actualData: [120, 82, 91, 154, 162, 140, 145]
-  },
-  messages: {
-    expectedData: [200, 192, 120, 144, 160, 130, 140],
-    actualData: [180, 160, 151, 106, 145, 150, 130]
-  },
-  purchases: {
-    expectedData: [80, 100, 121, 104, 105, 90, 100],
-    actualData: [120, 90, 100, 138, 142, 130, 130]
-  },
-  shoppings: {
-    expectedData: [130, 140, 141, 142, 145, 150, 160],
-    actualData: [120, 82, 91, 154, 162, 140, 130]
-  }
-}
 
 export default {
-  name: 'dashboard-admin',
-  components: {
-    GithubCorner,
-    PanelGroup,
-    LineChart,
-    RaddarChart,
-    PieChart,
-    BarChart,
-    TransactionTable,
-    TodoList,
-    BoxCard
-  },
+  name: 'admin-editor',
+  components: { PanThumb, GithubCorner },
   data() {
     return {
-      lineChartData: lineChartData.newVisitis
+      emptyGif: 'https://wpimg.wallstcn.com/0e03b7da-db9e-4819-ba10-9016ddfdaed3'
     }
   },
-  methods: {
-    handleSetLineChartData(type) {
-      this.lineChartData = lineChartData[type]
-    }
+  computed: {
+    ...mapGetters([
+      'name',
+      'avatar',
+      'roles'
+    ])
   }
 }
 </script>
 
 <style rel="stylesheet/scss" lang="scss" scoped>
-.dashboard-editor-container {
-  padding: 32px;
-  background-color: rgb(240, 242, 245);
-  .chart-wrapper {
-    background: #fff;
-    padding: 16px 16px 0;
-    margin-bottom: 32px;
-  }
-}
+	.emptyGif {
+		display: block;
+		width: 45%;
+		margin: 0 auto;
+	}
+
+	.dashboard-editor-container {
+		background-color: #e3e3e3;
+		min-height: 100vh;
+		margin-top: -50px;
+		padding: 100px 60px 0px;
+		.pan-info-roles {
+			font-size: 12px;
+			font-weight: 700;
+			color: #333;
+			display: block;
+		}
+		.info-container {
+			position: relative;
+			margin-left: 190px;
+			height: 150px;
+			line-height: 200px;
+			.display_name {
+				font-size: 48px;
+				line-height: 48px;
+				color: #212121;
+				position: absolute;
+				top: 25px;
+			}
+		}
+	}
 </style>
+

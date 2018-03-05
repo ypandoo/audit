@@ -219,6 +219,28 @@ export default {
       //this.getList()
   },
   methods: {
+    validateDateTime(dateTime1, dateTime2){
+      let dt1 = new Date(dateTime1)
+      let dt2 = new Date(dateTime2)
+      let dtCurrent = new Date()
+
+      if(dt1 > dt2)
+        return {error_code: 1, msg: '开始时间大于结束时间'}
+      
+      if(dt1 > dtCurrent)
+        return {error_code: 1, msg: '开始时间不能大于当前时间'}
+
+      if(dt2 > dtCurrent)
+        return {error_code: 1, msg: '结束时间不能大于当前时间'}
+
+      var ONE_HOUR = 60 * 60 * 1000
+      if(dt2 - dt1 > ONE_HOUR*24*365)
+        return {error_code: 1, msg: '时间间隔不能大于365天'}
+
+      return {error_code: 0, msg: '校验成功'}
+      
+    },
+
     tableRowClassName({row, rowIndex}) {
         var ONE_HOUR = 60 * 60 * 1000
         var currentDate = new Date()
@@ -243,6 +265,38 @@ export default {
         imageState.push(this.listQuery.imageState)
       }
 
+      if(this.listQuery.upload_start_time == '' || this.listQuery.upload_end_time == ''){
+        self.listLoading = false
+        return this.$message({message: '上传起始或结束时间不能为空', type: 'warning'})
+      }
+
+      if(this.listQuery.audit_start_time == '' && this.listQuery.audit_end_time != ''){
+        self.listLoading = false
+        return this.$message({message: '审核起始或结束时间只有一项有数据', type: 'warning'})
+      }
+
+      if(this.listQuery.audit_start_time != '' && this.listQuery.audit_end_time == ''){
+        self.listLoading = false
+        return this.$message({message: '审核起始或结束时间只有一项有数据', type: 'warning'})
+      }
+
+      var checkObj = self.validateDateTime(this.listQuery.upload_start_time, this.listQuery.upload_end_time)
+      if(checkObj.error_code != 0){
+        self.listLoading = false
+        return this.$message({message: '上传时间错误:'+checkObj.msg, type: 'warning'})
+      }
+
+
+      if(this.listQuery.audit_start_time != '' && this.listQuery.audit_end_time != ''){
+        checkObj = {}
+        checkObj = self.validateDateTime(this.listQuery.audit_start_time, this.listQuery.audit_end_time)
+        if(checkObj.error_code != 0){
+          self.listLoading = false
+          this.$message({message: '审核时间错误:'+checkObj.msg, type: 'warning'})
+          return
+        }
+      }
+
       var query = {
         'customerId': this.listQuery.customerId,
         'currentPage': this.listQuery.page,
@@ -258,6 +312,7 @@ export default {
         self.total = response.data.data.pagination.total
         self.listLoading = false
       }).catch(err => {
+        self.listLoading = false
         this.$notify({
           title: '失败',
           message: '获取审核列表失败',
