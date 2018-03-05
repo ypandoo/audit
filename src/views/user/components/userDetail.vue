@@ -79,36 +79,11 @@
                   </el-form-item>
                 </el-col>
 
-                <!-- <el-col :span="8">
-                  <el-form-item label-width="80px" label="发布时间:" class="postInfo-container-item">
-                    <el-date-picker v-model="postForm.display_time" type="datetime" format="yyyy-MM-dd HH:mm:ss" placeholder="选择日期时间">
-                    </el-date-picker>
-                  </el-form-item>
-                </el-col> -->
               </el-row>
             </div>
           </el-col>
         </el-row>
 
-        <!-- <el-form-item style="margin-bottom: 40px;" label-width="100px" label="文章简介:" prop="content_short">
-          <el-input type="textarea" class="article-textarea" :rows="1" autosize placeholder="请输入内容" v-model="postForm.content_short" >
-          </el-input>
-          <span class="word-counter" v-show="contentShortLength">{{contentShortLength}}字</span>
-        </el-form-item>
-
-
-        <div style="margin-bottom: 20px;">
-          <el-form-item label-width="100px" label="上传附件:" prop="image_uri">
-          <Upload v-model="postForm.image_uri"></Upload>
-          </el-form-item>
-        </div>
-
-
-        <div class="editor-container">
-          <el-form-item label-width="100px" label="文章正文:" prop="content">
-          <tinymce :height=500 ref="editor" v-model="postForm.content"></tinymce>
-          </el-form-item>
-        </div> -->
       </div>
     </el-form>
 
@@ -201,13 +176,13 @@ export default {
     } 
 
     const passwordCheck  = (rule, value, callback) => {
-      if (value === '') {
+      if (value == '') {
         this.$message({message: '密码未填写完整',type: 'error'})
         //callback(null)
         return
       } 
-      if (!validator.isNumeric(value)) {
-        this.$message({message: '密码只能是数字',type: 'error'})
+      if (!validator.isAlphanumeric(value)) {
+        this.$message({message: '密码只能是数字和字母',type: 'error'})
         //callback(null)
         return
       }
@@ -221,7 +196,7 @@ export default {
     } 
 
     const nameCheck  = (rule, value, callback) => {
-      if (value === '') {
+      if (value == '') {
         this.$message({message: '用户名未填写完整',type: 'error'})
         //callback(null)
         return
@@ -241,7 +216,7 @@ export default {
     } 
 
     const emailCheck  = (rule, value, callback) => {
-      if (value === '') {
+      if (value == '') {
         this.$message({message: 'email未填写完整',type: 'error'})
         //callback(null)
         return
@@ -331,7 +306,7 @@ export default {
 
             // add new article
             ModifyUserInfo(submitData).then(response => {
-              if (response.data.error_code === 0) {
+              if (response.data.error_code == 0) {
                 this.$notify({
                   title: '成功',
                   message: '修改成功',
@@ -341,7 +316,7 @@ export default {
                 this.postForm.status = 'published'
               } else {
                 this.$message({
-                  message: response.data.msg,
+                  message: response.data.data,
                   type: 'warning'
                 })
               }

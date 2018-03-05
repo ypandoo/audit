@@ -95,7 +95,7 @@ export const asyncRouterMap = [
     alwaysShow: true,
     children: [
       { path: 'auditList',  component: _import('audit/list'), name: 'auditList', meta: { title: 'auditList', icon: 'peoples',roles: ['admin', 'auditor'] }},
-      { path: 'auditDetail/:id', hidden: true, component: _import('audit/auditDetail'), name: 'auditDetail', meta: { title: 'auditDetail', icon: 'peoples',  roles: ['auditor'] }},
+      { path: 'auditDetail/:id', hidden: true, component: _import('audit/auditDetail'), name: 'auditDetail', meta: { title: 'auditDetail', icon: 'peoples',  roles: ['admin', 'auditor'] }},
       { path: 'statistics', component: _import('audit/statistics'), name: 'statistics', meta: { title: 'statistics', icon: 'peoples',  roles: ['admin'] }},
     ]
   },

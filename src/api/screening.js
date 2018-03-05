@@ -18,9 +18,9 @@ export function GetScreeningItem(query) {
 }
 
 
-export function postScreeningResult(query) {
+export function PostScreeningResult(query) {
   return request({
-    url: '/screening/postScreeningResult',
+    url: '/screening/PostScreeningResult',
     method: 'post',
     data: query
   })

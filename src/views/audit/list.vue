@@ -3,17 +3,17 @@
     <div class="filter-container">
       
       <span class="gap-right"> 上传日期 </span>
-      <el-date-picker v-model="listQuery.upload_start_time" type="date" format="yyyy-MM-dd" placeholder="选择开始日期">
+      <el-date-picker v-model="listQuery.upload_start_time" type="date" :clearable= "false" format="yyyy-MM-dd" placeholder="选择开始日期">
       </el-date-picker>
 
-      <el-date-picker v-model="listQuery.upload_end_time" type="date" format="yyyy-MM-dd" placeholder="选择结束日期">
+      <el-date-picker v-model="listQuery.upload_end_time" type="date" :clearable= "false" format="yyyy-MM-dd" placeholder="选择结束日期">
       </el-date-picker>
 
       <span class="gap-left gap-right"> 审核日期 </span>
-      <el-date-picker :disabled="listQuery.imageState == 'IMPORTED'" v-model="listQuery.audit_start_time" type="date" format="yyyy-MM-dd" placeholder="选择开始日期">
+      <el-date-picker :disabled="listQuery.imageState == 'IMPORTED' || listQuery.imageState == 'TODO'" v-model="listQuery.audit_start_time" type="date" format="yyyy-MM-dd" placeholder="选择开始日期">
       </el-date-picker>
 
-      <el-date-picker :disabled="listQuery.imageState == 'IMPORTED'" v-model="listQuery.audit_end_time" type="date" format="yyyy-MM-dd" placeholder="选择结束日期">
+      <el-date-picker :disabled="listQuery.imageState == 'IMPORTED' || listQuery.imageState == 'TODO'" v-model="listQuery.audit_end_time" type="date" format="yyyy-MM-dd" placeholder="选择结束日期">
       </el-date-picker>
 
     </div>
@@ -21,12 +21,12 @@
     <div class="filter-container">
       <span class="gap-right"> 审核银行 </span>
       <el-select clearable style="width: 445px" class="filter-item" v-model="listQuery.customerId" :placeholder="'银行'">
-        <el-option v-for="item in bankList" :key="item.name" :label="item.ident" :value="item.id">
+        <el-option v-for="item in bankList" :key="item.name" :label="item.ident" :value="item.name">
         </el-option>
       </el-select> 
 
       <span class="gap-left gap-right"> 图片状态 </span>
-      <el-select @change='handleFilter' style="width: 445px" class="filter-item" v-model="listQuery.imageState">
+      <el-select style="width: 445px" class="filter-item" v-model="listQuery.imageState">
         <el-option v-for="item in stateList" :key="item.key" :label="item.display_name" :value="item.key">
         </el-option>
       </el-select>
@@ -39,55 +39,55 @@
       style="width: 100%" :row-class-name="tableRowClassName">
       <el-table-column align="center" :label="$t('table.imageId')" width="240">
         <template slot-scope="scope">
-          <span>{{scope.row.imageId}}</span>
+          <span>{{scope.row.itemId}}</span>
         </template>
       </el-table-column>
 
-      <el-table-column align="center" :label="$t('table.imageId')" width="240">
+      <!-- <el-table-column align="center" :label="$t('table.imageId')" width="240">
         <template slot-scope="scope">
           <img :src="scope.row.imageData" style="width:100px; height:auto"/>
         </template>
-      </el-table-column>
+      </el-table-column> -->
 
       <el-table-column align="center" :label="$t('table.customerName')" width="160">
         <template slot-scope="scope">
-          <span>{{scope.row.customername}}</span>
+          <span>{{scope.row.customerName}}</span>
         </template>
       </el-table-column>
 
-      <el-table-column width="160" align="center" :label="$t('table.imageState')">
+      <el-table-column width="120" align="center" :label="$t('table.imageState')">
         <template slot-scope="scope">
           <span>{{scope.row.imageState | imageStateFilter}}</span>
         </template>
       </el-table-column>
 
-      <el-table-column width="160" align="center" :label="$t('table.screeningUserName1')">
+      <el-table-column width="80" align="center" :label="'审核员'">
         <template slot-scope="scope">
-          <span >{{scope.row.screeningUserName1}}</span>
+          <span >{{scope.row.screeningRecord.length >= 1 ? scope.row.screeningRecord[0].username : ''}}</span>
         </template>
       </el-table-column> 
 
-      <el-table-column width="200" align="center" :label="$t('table.screeningUserName2')">
+      <el-table-column width="80" align="center" :label="'审核员'">
         <template slot-scope="scope">
-          <span>{{scope.row.screeningUserName2 }}</span>
+          <span>{{scope.row.screeningRecord.length >= 2 ? scope.row.screeningRecord[1].username : ''}} </span>
         </template>
       </el-table-column>
 
       <el-table-column width="200" align="center" :label="$t('table.uploadDate')">
         <template slot-scope="scope">
-          <span>{{scope.row.uploadDate | parseTime('{y}-{m}-{d} {h}:{i}') }}</span>
+          <span>{{ parseInt(scope.row.creationDate)*1000 | parseTime('{y}-{m}-{d} {h}:{i}') }}</span>
         </template>
       </el-table-column>
 
       <el-table-column width="200" align="center" :label="$t('table.screeningDate')">
         <template slot-scope="scope">
-          <span>{{scope.row.screeningDate | parseTime('{y}-{m}-{d} {h}:{i}') }}</span>
+          <span>{{ parseInt(scope.row.screeningDate)*1000 | parseTime('{y}-{m}-{d} {h}:{i}') }}</span>
         </template>
       </el-table-column>
 
       <el-table-column align="center" :label="$t('table.actions')"  class-name="small-padding fixed-width">
         <template slot-scope="scope">
-          <router-link :to="'auditDetail/'+scope.row.imageId" class="link-type" style="margin-right:20px" >审核</router-link>
+          <router-link :to="'auditDetail/'+scope.row.itemId" class="link-type" style="margin-right:20px" >审核</router-link>
         </template>
       </el-table-column>
     </el-table>
@@ -123,6 +123,10 @@ export default {
     waves
   },
   data() {
+    var currentDate =  new Date()
+    var lastMonth = new Date()
+    lastMonth.setMonth(lastMonth.getMonth() - 1);
+
     return {
       tableKey: 0,
       list: null,
@@ -132,8 +136,8 @@ export default {
       listQuery: {
         page: 1,
         limit: 20,
-        upload_start_time : new Date(),
-        upload_end_time : new Date(),
+        upload_start_time : lastMonth,
+        upload_end_time : currentDate,
         audit_start_time: '',
         audit_end_time: '',
         customerId: 'ICBC',
@@ -218,8 +222,8 @@ export default {
     tableRowClassName({row, rowIndex}) {
         var ONE_HOUR = 60 * 60 * 1000
         var currentDate = new Date()
-        var dt =  new Date(parseInt(row.screeningDate)*1000)
-        if(currentDate - dt > ONE_HOUR*12)
+        var dt =  new Date(parseInt(row.creationDate)*1000)
+        if(currentDate - dt > ONE_HOUR*12 && (row.imageState == 'IMPORTED' || row.imageState == 'PARTIAL_ACCEPTED'))
         {
           return 'warning-row';
         } 
@@ -233,7 +237,7 @@ export default {
       var imageState = []
       if(this.listQuery.imageState == 'TODO')
       {
-        imageState.push('IMPORETD')
+        imageState.push('IMPORTED')
         imageState.push('PARTIAL_ACCEPTED')
       }else{
         imageState.push(this.listQuery.imageState)
@@ -243,12 +247,11 @@ export default {
         'customerId': this.listQuery.customerId,
         'currentPage': this.listQuery.page,
         'pageSize': this.listQuery.limit,
-        'uploadDateFrom': new Date(this.listQuery.upload_start_time).getTime(),
-        'uploadDateTo': new Date(this.listQuery.upload_end_time).getTime(),
-        'screeningDateFrom': new Date(this.listQuery.audit_start_time).getTime(),
-        'screeningDateTo': new Date(this.listQuery.audit_end_time).getTime(),
+        'uploadDateFrom':    parseInt((new Date(this.listQuery.upload_start_time)).getTime()*0.001),
+        'uploadDateTo':      parseInt((new Date(this.listQuery.upload_end_time)).getTime()*0.001),
+        'screeningDateFrom': this.listQuery.audit_start_time == '' ? '' : parseInt((new Date(this.listQuery.audit_start_time)).getTime()*0.001),
+        'screeningDateTo':   this.listQuery.audit_end_time == '' ? '' : parseInt((new Date(this.listQuery.audit_end_time)).getTime()*0.001),
         'imageState': imageState
-
       }
       GetScreeningList(query).then(response => {
         self.list = response.data.data.list

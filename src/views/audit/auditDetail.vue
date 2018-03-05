@@ -12,13 +12,13 @@
 
       <el-table-column  align="center" :label="$t('table.uploadDate')" width="240">
         <template slot-scope="scope">
-          <span>{{scope.row.uploadDate | parseTime('{y}-{m}-{d} {h}:{i}')}}</span>
+          <span>{{scope.row.uploadDate*1000 | parseTime('{y}-{m}-{d} {h}:{i}')}}</span>
         </template>
       </el-table-column>
 
       <el-table-column  align="center" :label="'最后审核时间'" width="240">
         <template slot-scope="scope">
-          <span>{{scope.row.screeningDate | parseTime('{y}-{m}-{d} {h}:{i}')}}</span>
+          <span>{{scope.row.screeningDate*1000 | parseTime('{y}-{m}-{d} {h}:{i}')}}</span>
         </template>
       </el-table-column>
 
@@ -43,13 +43,13 @@
       <el-table-column label="审核历史">
       <el-table-column align="center" :label="$t('table.screeningDate')" width="160">
         <template slot-scope="scope">
-          <span>{{scope.row.screeningDate | parseTime('{y}-{m}-{d} {h}:{i}')}}</span>
+          <span>{{scope.row.screeningDate*1000 | parseTime('{y}-{m}-{d} {h}:{i}')}}</span>
         </template>
       </el-table-column>
 
       <el-table-column align="center" :label="$t('table.userName')" width="240">
         <template slot-scope="scope">
-          <span>{{scope.row.userName}}</span>
+          <span>{{scope.row.username}}</span>
         </template>
       </el-table-column>
 
@@ -71,9 +71,15 @@
       审核内容
     </el-row>
       <el-row>
-        <el-col :span=16 class="head" style="height:660px">
+        <el-col :span=16 class="head">
            <img :src="imageData" class="image">
+
+           <div style="position:relative">
+             <img :src="imageData" class="image"/>
+             <img :src="layout" style="position:absolute; top:0; left:0;" class="image" />
+           </div>
         </el-col>
+
         <el-col :span=8 class="head" style="height:660px; background-color:white">
 
           <el-row>审核文字</el-row>
@@ -83,10 +89,11 @@
     padding: 10px 20px;
     margin-bottom: 60px;">{{text}}</p>
 
-          <el-row>输入审核理由</el-row>
-          <MDinput name="name" v-model="reason" required :maxlength="100">
+          <el-row>输入审核理由(至多200个字符)</el-row>
+          <el-input type="textarea" :autosize="{ minRows: 8, maxRows: 20}" 
+          name="name" v-model="reason" required :maxlength="200">
                 
-          </MDinput>
+          </el-input>
 
 
           <el-row style="    margin-top: 60px;
@@ -103,30 +110,15 @@
 </template>
 
 <script>
-import { GetScreeningList, GetScreeningItem, postScreeningResult} from '@/api/screening'
-import MDinput from '@/components/MDinput'
+import { GetScreeningList, GetScreeningItem, PostScreeningResult} from '@/api/screening'
 import waves from '@/directive/waves' // 水波纹指令
 import { parseTime } from '@/utils'
-
-const calendarTypeOptions = [
-  { key: 'CN', display_name: 'China' },
-  { key: 'US', display_name: 'USA' },
-  { key: 'JP', display_name: 'Japan' },
-  { key: 'EU', display_name: 'Eurozone' }
-]
-
-// arr to obj ,such as { CN : "China", US : "USA" }
-const calendarTypeKeyValue = calendarTypeOptions.reduce((acc, cur) => {
-  acc[cur.key] = cur.display_name
-  return acc
-}, {})
 
 export default {
   name: 'complexTable',
   directives: {
     waves
   },
-  components: { MDinput },
   data() {
     return {
       tableKey: 0,
@@ -134,23 +126,14 @@ export default {
       basic: [],
       history:[],
       audited: true,
+      isAdmin: false,
       total: null,
       listLoading: true,
       imageData: '',
+      layout: '',
       text: '',
       reason: '',
       currentRow: {},
-      listQuery: {
-        page: 1,
-        limit: 20,
-        // importance: undefined,
-        // title: undefined,
-        // type: undefined,
-        // sort: '+id'
-      },
-      importanceOptions: [1, 2, 3],
-      typeOptions: {},
-      sortOptions: [{ label: 'ID Ascending', key: '+id' }, { label: 'ID Descending', key: '-id' }],
       statusOptions: ['published', 'draft', 'deleted'],
       showReviewer: false,
       temp: {
@@ -197,13 +180,18 @@ export default {
     },
   },
   created() {
+      if(this.$store.getters.roles[0] == 'admin')
+        this.isAdmin = true;
+      else
+        this.isAdmin = false;
+
       this.getList()
   },
   methods: {
     getList() {
       var self = this
       self.listLoading = true
-      GetScreeningItem({imageId:  this.$route.params.id }).then(response => {
+      GetScreeningItem({itemId:  this.$route.params.id }).then(response => {
         if(response.data.error_code == 0)
         {
           self.basic =[{imageState: response.data.data.imageState
@@ -218,7 +206,27 @@ export default {
           self.history = response.data.data.screeningRecord
           self.text = response.data.data.text
           self.listLoading = false
-          self.audited = false
+          self.layout = response.data.data.cardLayout
+
+          //test self audited
+          var inRecord = false;
+          for(var i=0; i<self.history.length; ++i)
+          {
+            if(self.history[i].account == self.$store.getters.token)
+            {
+              inRecord = true;
+              self.reason = self.history[i].screeningDesc
+            }  
+          }
+
+          var accptedOrRejected = false;
+          if(response.data.data.imageState == 'REJECTED' || response.data.data.imageState == 'ACCEPTED')
+            accptedOrRejected = true
+          
+          if(inRecord || accptedOrRejected || self.isAdmin)
+            self.audited = true
+          else
+            self.audited = false
         }else{
           this.$message({message: '获取数据失败',type: 'warning'})
           console.log(err)
@@ -249,7 +257,7 @@ export default {
          return
       }
 
-      postScreeningResult({imageId: this.$route.params.id, screeningResult:screeningResult, comments: this.reason}).then(response => {
+      PostScreeningResult({itemId: this.$route.params.id, screeningResult:screeningResult, comments: this.reason}).then(response => {
         this.$message({message: '操作成功',type: 'success'})
         self.audited = true
       }).catch(err => {
@@ -266,84 +274,6 @@ export default {
         status: 'published'
       }
     },
-    handleModifyPassword(row) {
-      this.resetTemp()
-      this.dialogStatus = 'create'
-      this.dialogResetPassword = true
-      this.temp.account = row.account
-      // this.$nextTick(() => {
-      //   this.$refs['dataForm'].clearValidate()
-      // })
-    },
-
-    handleUpdate(row) {
-      this.temp = Object.assign({}, row) // copy obj
-      this.temp.timestamp = new Date(this.temp.timestamp)
-      this.dialogStatus = 'update'
-      this.dialogFormVisible = true
-      this.$nextTick(() => {
-        this.$refs['dataForm'].clearValidate()
-      })
-    },
-    updateData() {
-    },
-    handleResetPassword() {
-
-      if(this.temp.password != this.temp.repassword){
-          this.$message({message: '密码不一致',type: 'warning'})
-          return 
-      }
-
-      ResetPassword({ account: this.temp.account }).then(response => {
-        this.$notify({
-          title: '成功',
-          message: '修改密码成功',
-          type: 'success',
-          duration: 2000
-        })
-        const index = this.list.indexOf(this.currentRow)
-        this.list.splice(index, 1)
-      }).catch(err => {
-        this.$notify({
-          title: '失败',
-          message: '修改密码失败',
-          type: 'warning',
-          duration: 2000
-        })
-        console.log(err)
-      })
-
-      this.dialogResetPassword = false
-    },
-    handleConfirmDelete(row){
-      this.currentRow = row
-      this.dialogDelete = true
-    },
-    // handleFetchPv(pv) {
-    //   // fetchPv(pv).then(response => {
-    //   //   this.pvData = response.data.pvData
-    //   //   this.dialogDelete = true
-    //   // })
-    // },
-    handleDownload() {
-      this.downloadLoading = true
-      import('@/vendor/Export2Excel').then(excel => {
-        const tHeader = ['timestamp', 'title', 'type', 'importance', 'status']
-        const filterVal = ['timestamp', 'title', 'type', 'importance', 'status']
-        const data = this.formatJson(filterVal, this.list)
-        excel.export_json_to_excel(tHeader, data, 'table-list')
-        this.downloadLoading = false
-      })
-    },
-    formatJson(filterVal, jsonData) {
-      return jsonData.map(v => filterVal.map(j => {
-        if (j === 'timestamp') {
-          return parseTime(v[j])
-        } else {
-          return v[j]
-        }
-      }))
-    }
   }
 }
 </script>

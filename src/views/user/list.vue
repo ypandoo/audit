@@ -51,9 +51,9 @@
         <template slot-scope="scope">
           <el-button size="mini" type="primary" @click="handleModifyPassword(scope.row)" style="width:80px">修改密码
           </el-button>
-          <el-button size="mini" type="primary" :disabled="scope.row.state == 'ACTIVE'" @click="handleModifyStatus(scope.row, 'ACTIVE')">启用 
+          <el-button size="mini" type="primary" :disabled="scope.row.state == 'ACTIVE' || scope.row.role.roleId == 10" @click="handleModifyStatus(scope.row, 'ACTIVE')">启用 
           </el-button>
-          <el-button size="mini" type="danger"  :disabled="scope.row.state == 'INACTIVE'" @click="handleModifyStatus(scope.row, 'INACTIVE')">停用
+          <el-button size="mini" type="danger"  :disabled="scope.row.state == 'INACTIVE' || scope.row.role.roleId == 10" @click="handleModifyStatus(scope.row, 'INACTIVE')">停用
           </el-button>
         </template>
       </el-table-column>
@@ -165,7 +165,7 @@ export default {
     getList() {
       var self = this
       self.listLoading = true
-      GetUserList({}).then(response => {
+      GetUserList({roleId: ''}).then(response => {
         self.list = response.data.data
         self.total = response.data.total
         self.listLoading = false
@@ -222,19 +222,7 @@ export default {
       //   this.$refs['dataForm'].clearValidate()
       // })
     },
-    // createData() {
-    // },
-    // handleUpdate(row) {
-    //   this.temp = Object.assign({}, row) // copy obj
-    //   this.temp.timestamp = new Date(this.temp.timestamp)
-    //   this.dialogStatus = 'update'
-    //   this.dialogFormVisible = true
-    //   this.$nextTick(() => {
-    //     this.$refs['dataForm'].clearValidate()
-    //   })
-    // },
-    // updateData() {
-    // },
+
     handleResetPassword() {
 
       if(this.temp.password != this.temp.repassword){
