@@ -68,10 +68,10 @@
             </el-form-item>
 
             <el-form-item :label="$t('table.password')">
-              <el-input v-model="temp.password" type="password"></el-input>
+              <el-input v-model="temp.password" type="password" :maxlength="12" :minlength="6"></el-input>
             </el-form-item>
             <el-form-item :label="$t('table.repassword')">
-              <el-input v-model="temp.repassword" type="password"></el-input>
+              <el-input v-model="temp.repassword" type="password" :maxlength="12" :minlength="6"></el-input>
             </el-form-item>
 
       </el-form>
@@ -89,6 +89,7 @@
 import { GetUserList, ResetPassword, UpdateUserState } from '@/api/user'
 import waves from '@/directive/waves' // 水波纹指令
 import { parseTime } from '@/utils'
+import validator from 'validator';
 
 
 export default {
@@ -162,6 +163,21 @@ export default {
       this.getList()
   },
   methods: {
+    passwordCheckInDialog(value){
+      if (value == '') {
+        this.$message({message: '密码未填写完整',type: 'error'})
+        return
+      } 
+      if (!validator.isAlphanumeric(value)) {
+        this.$message({message: '密码只能是数字和字母',type: 'error'})
+        return
+      }
+      if (!validator.isLength(value,{min:6, max:12})) {
+        this.$message({message: '密码为6-12位',type: 'error'})
+        return
+      }  
+    },
+
     getList() {
       var self = this
       self.listLoading = true
@@ -193,7 +209,7 @@ export default {
     },
 
     handleModifyStatus(row, state) {
-      UpdateUserState({account: row.username, state:state}).then(response => {
+      UpdateUserState({account: row.account, state:state}).then(response => {
         this.$message({message: '操作成功',type: 'success'})
         row.state = state
       }).catch(err => {
@@ -228,6 +244,14 @@ export default {
       if(this.temp.password != this.temp.repassword){
           this.$message({message: '密码不一致',type: 'warning'})
           return 
+      }
+
+      if(this.passwordCheckInDialog(this.temp.password)){
+        return 
+      }
+
+      if(this.passwordCheckInDialog(this.temp.repassword)){
+        return 
       }
 
       ResetPassword({ account: this.temp.account, password: this.temp.password }).then(response => {

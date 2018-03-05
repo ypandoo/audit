@@ -140,7 +140,7 @@ export default {
         upload_end_time : currentDate,
         audit_start_time: '',
         audit_end_time: '',
-        customerId: 'ICBC',
+        customerId: '',
         imageState: 'TODO'
       },
       isAdmin: true,
