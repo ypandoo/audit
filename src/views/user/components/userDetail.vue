@@ -72,7 +72,7 @@
               <el-row>
                 <el-col :span="12">
                   <el-form-item :label="$t('table.role')" prop ="role" >
-                    <el-select class="filter-item" :disabled="isEdit" v-model="postForm.role" clearable placeholder="请选择角色" style='min-width:400px;'>
+                    <el-select class="filter-item" :disabled="true" v-model="postForm.role" clearable placeholder="请选择角色" style='min-width:400px;'>
                       <el-option v-for="item in  typeOptions" :key="item.roleId" :label="item.displayName" :value="item.roleId">
                       </el-option>
                     </el-select>
@@ -265,14 +265,14 @@ export default {
       postForm: Object.assign({}, defaultForm),
       fetchSuccess: true,
       loading: false,
-      typeOptions: {},
+      typeOptions: [],
       rules: {
         username: [{ required: true, validator: nameCheck }],
         password: [{ required: true, validator: passwordCheck }],
-        email: [{ required: true, validator: emailCheck }],
+        //email: [{ required: true, validator: emailCheck }],
         account: [{ required: true, validator: accountCheck }],
         repassword: [{ required: true, validator: passwordCheck }],
-        mobile: [{ required: true, validator: mobileCheck }],
+        //mobile: [{ required: true, validator: mobileCheck }],
         role: [{ required: true, validator: validateRequire }],
       }
     }
@@ -282,6 +282,7 @@ export default {
       this.postForm = Object.assign({}, defaultForm)
       GetRoleList({}).then(response => {
         this.typeOptions = response.data.data;
+        this.postForm.role = 20; //make auditor selected
         if (this.isEdit) {
           this.fetchData()
         } 

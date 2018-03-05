@@ -1,6 +1,6 @@
 <template>
   <div class="dashboard-editor-container">
-    <github-corner></github-corner>
+    <!-- <github-corner></github-corner>
 
     <panel-group @handleSetLineChartData="handleSetLineChartData"></panel-group>
 
@@ -36,7 +36,7 @@
       <el-col :xs="{span: 12}" :sm="{span: 12}" :md="{span: 12}" :lg="{span: 6}" :xl="{span: 5}">
         <box-card></box-card>
       </el-col>
-    </el-row>
+    </el-row> -->
 
   </div>
 </template>

@@ -4,7 +4,7 @@ export function GetRoleList(query) {
   return request({
     url: '/user/GetRoleList',
     method: 'post',
-    params: query
+    params: query,
   })
 }
 

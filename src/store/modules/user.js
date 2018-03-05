@@ -46,7 +46,7 @@ const user = {
   actions: {
     // 用户名登录
     LoginByUsername({ commit }, userInfo) {
-      const account = userInfo.username.trim()
+      const account = userInfo.account.trim()
       return new Promise((resolve, reject) => {
         Login(account, userInfo.password).then(response => {
           if(response.data.error_code == 0)
@@ -55,7 +55,7 @@ const user = {
             setToken(account)
             resolve()
           }else{
-            reject('登录失败,请检查用户名和密码')
+            reject(response.data.data)
           }
         }).catch(error => {
           reject(error)
@@ -72,11 +72,11 @@ const user = {
           }
 
           const data = response.data
-          commit('SET_ROLES', [data.data.roleName])
+          commit('SET_ROLES', [data.data.role.roleName.toLowerCase()])
           commit('SET_NAME', data.data.username)
           commit('SET_AVATAR', data.data.avatar)
           // commit('SET_INTRODUCTION', data.introduction)
-          resolve( [data.data.roleName])
+          resolve([data.data.role.roleName.toLowerCase()])
         }).catch(error => {
           reject(error)
         })

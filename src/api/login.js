@@ -29,8 +29,8 @@ export function getUserInfo(token) {
 
 export function Login(username, password) {
   const data = {
-    username,
-    password
+    account: username,
+    password: password
   }
   return request({
     url: '/auth/Login',
@@ -41,7 +41,7 @@ export function Login(username, password) {
 
 export function CurrentUser(data) {
   return request({
-    url: '/auth/CurrentUser',
+    url: '/user/CurrentUser',
     method: 'post',
     data
   })
