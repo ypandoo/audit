@@ -20,8 +20,8 @@
 
     <div class="filter-container">
       <span class="gap-right"> 审核银行 </span>
-      <el-select clearable style="width: 445px" class="filter-item" v-model="listQuery.customerName" :placeholder="'银行'">
-        <el-option v-for="item in bankList" :key="item.id" :label="item.ident" :value="item.id">
+      <el-select clearable style="width: 445px" class="filter-item" v-model="listQuery.customerId" :placeholder="'银行'">
+        <el-option v-for="item in bankList" :key="item.name" :label="item.ident" :value="item.id">
         </el-option>
       </el-select> 
 
@@ -51,7 +51,7 @@
 
       <el-table-column align="center" :label="$t('table.customerName')" width="160">
         <template slot-scope="scope">
-          <span>{{scope.row.customerName}}</span>
+          <span>{{scope.row.customername}}</span>
         </template>
       </el-table-column>
 
@@ -87,7 +87,7 @@
 
       <el-table-column align="center" :label="$t('table.actions')"  class-name="small-padding fixed-width">
         <template slot-scope="scope">
-          <router-link  v-if="!isAdmin" :to="'auditDetail/'+scope.row.imageId" class="link-type" style="margin-right:20px" >审核</router-link>
+          <router-link :to="'auditDetail/'+scope.row.imageId" class="link-type" style="margin-right:20px" >审核</router-link>
         </template>
       </el-table-column>
     </el-table>
@@ -102,35 +102,23 @@
 </template>
 
 <script>
-// import { fetchList, deleteArticle } from '@/api/article'
 import { GetScreeningList, GetBankList} from '@/api/screening'
 import { GetUserList} from '@/api/user'
 var moment = require('moment')
 import waves from '@/directive/waves' // 水波纹指令
 import { parseTime } from '@/utils'
 
-const calendarTypeOptions = [
-  { key: 'CN', display_name: 'China' },
-  { key: 'US', display_name: 'USA' },
-  { key: 'JP', display_name: 'Japan' },
-  { key: 'EU', display_name: 'Eurozone' }
-]
 
 const stateOptions = [
+  { key: 'TODO', display_name: '未审核+部分审核' },
   { key: 'IMPORTED', display_name: '未审核' },
   { key: 'PARTIAL_ACCEPTED', display_name: '部分审核' },
   { key: 'ACCEPTED', display_name: '审核通过' },
   { key: 'REJECTED', display_name: '审核驳回' }
 ]
 
-// arr to obj ,such as { CN : "China", US : "USA" }
-const calendarTypeKeyValue = calendarTypeOptions.reduce((acc, cur) => {
-  acc[cur.key] = cur.display_name
-  return acc
-}, {})
-
 export default {
-  name: 'complexTable',
+  name: 'auditList',
   directives: {
     waves
   },
@@ -148,11 +136,8 @@ export default {
         upload_end_time : new Date(),
         audit_start_time: '',
         audit_end_time: '',
-        customerName: '',
-        // importance: undefined,
-        // title: undefined,
-        // type: undefined,
-        // sort: '+id'
+        customerId: 'ICBC',
+        imageState: 'TODO'
       },
       isAdmin: true,
       bankList: {},
@@ -197,7 +182,8 @@ export default {
       const statusMap = {'IMPORTED':'未审核' ,
                         'PARTIAL_ACCEPTED':'部分审核' ,
                         'ACCEPTED':'审核通过' ,
-                        'REJECTED':'审核驳回' }
+                        'REJECTED':'审核驳回',
+                        'TODO': '未审核+部分审核'}
 
       return statusMap[status]
     },
@@ -214,7 +200,7 @@ export default {
       //role id auditor
       GetBankList().then(response => {
         this.bankList = response.data.data;
-        this.listQuery.imageState = 'IMPORTED';
+        this.listQuery.imageState = 'TODO';
         this.getList();
       }).catch(err => {
       this.$notify({
@@ -243,10 +229,38 @@ export default {
     getList() {
       var self = this
       self.listLoading = true
-      GetScreeningList(this.listQuery).then(response => {
+
+      var imageState = []
+      if(this.listQuery.imageState == 'TODO')
+      {
+        imageState.push('IMPORETD')
+        imageState.push('PARTIAL_ACCEPTED')
+      }else{
+        imageState.push(this.listQuery.imageState)
+      }
+
+      var query = {
+        'customerId': this.listQuery.customerId,
+        'currentPage': this.listQuery.page,
+        'pageSize': this.listQuery.limit,
+        'uploadDateFrom': new Date(this.listQuery.upload_start_time).getTime(),
+        'uploadDateTo': new Date(this.listQuery.upload_end_time).getTime(),
+        'screeningDateFrom': new Date(this.listQuery.audit_start_time).getTime(),
+        'screeningDateTo': new Date(this.listQuery.audit_end_time).getTime(),
+        'imageState': imageState
+
+      }
+      GetScreeningList(query).then(response => {
         self.list = response.data.data.list
         self.total = response.data.data.pagination.total
         self.listLoading = false
+      }).catch(err => {
+        this.$notify({
+          title: '失败',
+          message: '获取审核列表失败',
+          type: 'warning',
+          duration: 2000
+        })
       })
     },
     handleFilter() {
@@ -291,24 +305,6 @@ export default {
       //   this.$refs['dataForm'].clearValidate()
       // })
     },
-    createData() {
-      this.$refs['dataForm'].validate((valid) => {
-        if (valid) {
-          this.temp.id = parseInt(Math.random() * 100) + 1024 // mock a id
-          this.temp.author = 'vue-element-admin'
-          createArticle(this.temp).then(() => {
-            this.list.unshift(this.temp)
-            this.dialogFormVisible = false
-            this.$notify({
-              title: '成功',
-              message: '创建成功',
-              type: 'success',
-              duration: 2000
-            })
-          })
-        }
-      })
-    },
     handleUpdate(row) {
       this.temp = Object.assign({}, row) // copy obj
       this.temp.timestamp = new Date(this.temp.timestamp)
@@ -319,28 +315,6 @@ export default {
       })
     },
     updateData() {
-      this.$refs['dataForm'].validate((valid) => {
-        if (valid) {
-          const tempData = Object.assign({}, this.temp)
-          tempData.timestamp = +new Date(tempData.timestamp) // change Thu Nov 30 2017 16:41:05 GMT+0800 (CST) to 1512031311464
-          updateArticle(tempData).then(() => {
-            for (const v of this.list) {
-              if (v.id === this.temp.id) {
-                const index = this.list.indexOf(v)
-                this.list.splice(index, 1, this.temp)
-                break
-              }
-            }
-            this.dialogFormVisible = false
-            this.$notify({
-              title: '成功',
-              message: '更新成功',
-              type: 'success',
-              duration: 2000
-            })
-          })
-        }
-      })
     },
     handleResetPassword() {
 

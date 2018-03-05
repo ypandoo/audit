@@ -154,7 +154,6 @@
 </template>
 
 <script>
-// import { fetchList, deleteArticle } from '@/api/article'
 import {ScreeningSummary} from '@/api/screening'
 import waves from '@/directive/waves' // 水波纹指令
 import { parseTime } from '@/utils'

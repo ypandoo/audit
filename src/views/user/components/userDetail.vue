@@ -123,8 +123,6 @@ import Multiselect from 'vue-multiselect'// 使用的一个多选框组件，ele
 import 'vue-multiselect/dist/vue-multiselect.min.css'// 多选框组件css
 import Sticky from '@/components/Sticky' // 粘性header组件
 import { validateURL } from '@/utils/validate'
-// import { fetchArticle, createArticle, updateArticle } from '@/api/article'
-// import { fetchList as fetchCategory} from '@/api/category'
 import { userSearch } from '@/api/remoteSearch'
 import { GetRoleList, Register, ModifyUserInfo, GetUserProfile } from '@/api/user'
 import validator from 'validator';
@@ -301,7 +299,7 @@ export default {
           this.postForm.mobile = response.data.data.mobile
           this.postForm.username = response.data.data.username
           this.postForm.email = response.data.data.email
-          this.postForm.role = response.data.data.roleId
+          this.postForm.role = response.data.data.role.roleId
         }).catch(err => {
           this.fetchSuccess = false
           console.log(err)
@@ -368,17 +366,17 @@ export default {
 
             // add new article
             Register(submitData).then(response => {
-              if (response.data.error_code === 0) {
-                this.$notify({
-                  title: '成功',
+              if (response.data.error_code == 0) {
+                this.$message({
                   message: '用户注册成功',
                   type: 'success',
+                  showClose: true,
                   duration: 2000
                 })
                 this.postForm.status = 'published'
               } else {
                 this.$message({
-                  message: response.data.msg,
+                  message: response.data.data,
                   type: 'warning'
                 })
               }

@@ -13,7 +13,7 @@
 
       <el-table-column align="center" :label="$t('table.userName')" width="120">
         <template slot-scope="scope">
-          <span>{{scope.row.userName}}</span>
+          <span>{{scope.row.username}}</span>
         </template>
       </el-table-column>
 
@@ -51,9 +51,9 @@
         <template slot-scope="scope">
           <el-button size="mini" type="primary" @click="handleModifyPassword(scope.row)" style="width:80px">修改密码
           </el-button>
-          <el-button size="mini" type="primary" :disabled="scope.row.state == 'active'" @click="handleModifyStatus(scope.row, 'active')">启用 
+          <el-button size="mini" type="primary" :disabled="scope.row.state == 'ACTIVE'" @click="handleModifyStatus(scope.row, 'ACTIVE')">启用 
           </el-button>
-          <el-button size="mini" type="danger"  :disabled="scope.row.state == 'inactive'" @click="handleModifyStatus(scope.row, 'inactive')">停用
+          <el-button size="mini" type="danger"  :disabled="scope.row.state == 'INACTIVE'" @click="handleModifyStatus(scope.row, 'INACTIVE')">停用
           </el-button>
         </template>
       </el-table-column>
@@ -86,7 +86,6 @@
 </template>
 
 <script>
-// import { fetchList, deleteArticle } from '@/api/article'
 import { GetUserList, ResetPassword, UpdateUserState } from '@/api/user'
 import waves from '@/directive/waves' // 水波纹指令
 import { parseTime } from '@/utils'
@@ -170,7 +169,14 @@ export default {
         self.list = response.data.data
         self.total = response.data.total
         self.listLoading = false
-      })
+      }).catch(err => {
+              this.$message({
+                message: '获取用户列表失败',
+                type: 'warning'
+              })
+              self.listLoading = false
+              console.log(err)
+            })
     },
     handleFilter() {
       this.listQuery.page = 1
@@ -187,7 +193,7 @@ export default {
     },
 
     handleModifyStatus(row, state) {
-      UpdateUserState({state:state}).then(response => {
+      UpdateUserState({account: row.username, state:state}).then(response => {
         this.$message({message: '操作成功',type: 'success'})
         row.state = state
       }).catch(err => {

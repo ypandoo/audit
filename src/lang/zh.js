@@ -2,8 +2,8 @@ export default {
   route: {
     dashboard: '首页',
     userManage: '用户管理',
-    userCreate: '注册用户',
-    userList: '用户管理',
+    userCreate: '新增用户',
+    userList: '用户列表',
     introduction: '简述',
     documentation: '文档',
     permission: '权限测试页',
