@@ -12,7 +12,7 @@
 
       <span class="gap-left gap-right"> 审核银行 </span>
       <el-select clearable style="width: 445px" class="filter-item" v-model="listQuery.customerId" :placeholder="'银行'">
-        <el-option v-for="item in bankList" :key="item.name" :label="item.ident" :value="item.name">
+        <el-option v-for="item in bankList" :key="item.id" :label="item.ident" :value="item.id">
         </el-option>
       </el-select> 
     </div>
@@ -20,7 +20,7 @@
     <div class="filter-container">
       <span class="gap-right"> 审核人 &nbsp; &nbsp; </span>
       <el-select clearable class="filter-item" style="width: 150px" v-model="listQuery.account" :placeholder="'审核人'">
-        <el-option v-for="item in  userList" :key="item.account" :label="item.name" :value="item.account">
+        <el-option v-for="item in  userList" :key="item.account" :label="item.username" :value="item.account">
         </el-option>
       </el-select> 
 
@@ -116,8 +116,48 @@ export default {
         })
   },
   methods: {
+    validateDateTime(dateTime1, dateTime2){
+      let dt1 = new Date(dateTime1)
+      let dt2 = new Date(dateTime2)
+      let dtCurrent = new Date()
+
+      if(dt1 > dt2)
+        return {error_code: 1, msg: '开始时间大于结束时间'}
+      
+      if(dt1 > dtCurrent)
+        return {error_code: 1, msg: '开始时间不能大于当前时间'}
+
+      if(dt2 > dtCurrent)
+        return {error_code: 1, msg: '结束时间不能大于当前时间'}
+
+      var ONE_HOUR = 60 * 60 * 1000
+      if(dt2 - dt1 > ONE_HOUR*24*365)
+        return {error_code: 1, msg: '时间间隔不能大于365天'}
+
+      return {error_code: 0, msg: '校验成功'}
+      
+    },
     getList() {
       var self = this
+
+      if(this.listQuery.audit_start_time == '' && this.listQuery.audit_end_time != ''){
+        self.listLoading = false
+        return this.$message({message: '审核起始或结束时间只有一项有数据', type: 'warning'})
+      }
+
+      if(this.listQuery.audit_start_time != '' && this.listQuery.audit_end_time == ''){
+        self.listLoading = false
+        return this.$message({message: '审核起始或结束时间只有一项有数据', type: 'warning'})
+      }
+
+      if(this.listQuery.audit_start_time != '' && this.listQuery.audit_end_time != ''){
+        var checkObj = self.validateDateTime(this.listQuery.audit_start_time, this.listQuery.audit_end_time)
+        if(checkObj.error_code != 0){
+          self.listLoading = false
+          return this.$message({message: '审核时间错误:'+checkObj.msg, type: 'warning'})
+        }
+      }
+
       var query = {
         'screeningBank': this.listQuery.customerId,
         'screeningUser': this.listQuery.account,
